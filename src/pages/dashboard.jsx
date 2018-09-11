@@ -4,6 +4,7 @@ import { Button, Grid, Header, Icon } from 'semantic-ui-react';
 //redux
 import { connect } from 'react-redux';
 import { doGetOverDueTasks, doGetUpcomingTasks } from '../redux/actions/task-actions';
+import AddTask from '../components/new-task';
 
 
 class Dashboard extends Component {
@@ -20,6 +21,7 @@ class Dashboard extends Component {
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             activeUpcomingFilter: "1"
         }
+        this.addTask = React.createRef();
     }
 
     componentDidMount(){
@@ -125,6 +127,10 @@ class Dashboard extends Component {
         this.setState({ activeUpcomingFilter: value })
     }
 
+    updateProject = () => {
+        console.log('update project');
+    }
+
     render() {
         const { activeUpcomingFilter } = this.state;
         return (
@@ -158,7 +164,9 @@ class Dashboard extends Component {
                     <div className={"content-col"}>
                         <div className={"row space-between align-center"}>
                             <Header style={{ margin: 0 }} as="h3">Project Do</Header>
-                            <Button basic className={"default"} compact>New Task</Button>
+                            <Button 
+                                onClick={() => this.addTask.current.open()}
+                                basic className={"default"} compact>New Task</Button>
                         </div>
 
                         <Header as="h4">Task Summary</Header>
@@ -167,6 +175,8 @@ class Dashboard extends Component {
                         <Header as="h4">Task Types</Header>
                         {this.renderTaskTypes()}
                     </div>
+                    <AddTask ref={this.addTask} 
+                        taskAdded={this.updateProject}/>
                 </Grid.Column>
             </Grid>
         );
