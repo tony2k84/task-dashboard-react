@@ -1,0 +1,104 @@
+.main-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #F3F3F3;
+    height: 100%;
+}
+
+.nav{
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 10px 15px 10px;
+}
+
+.content{
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 15px 15px 0px 15px!important;
+    margin: 0px!important;
+}
+
+.content-col{
+    height: calc(100% - 50px);
+    background-color: white;
+    padding: 20px;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+}
+
+.col{
+    display: flex;
+    flex-direction: column;
+}
+
+.space-between{
+    justify-content: space-between;
+}
+
+.align-center{
+    align-items: center;
+}
+
+.color-default{
+    color: #5D5D5D;
+}
+
+.color-red{
+    color: #FF0000;
+}
+
+.color-ember{
+    color: #DD6031;
+}
+
+.color-blue{
+    color: #004EFF;
+}
+
+.padding-vertical{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.padding-horizontal{
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.ui.basic.button.default{
+    border-radius: 100px;
+    color: #707070;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.ui.basic.button.selected, .ui.basic.button.selected:focus, .ui.basic.button.selected:hover{
+    background: #004EFF!important;
+    border-radius: 100px;
+    color: white!important;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.ui.label{
+    border-radius: 100px!important;
+}
+
+.ui.input input{
+    border-radius: 100px!important;
+}
+
+.ui.action.input>.button{
+    border-top-right-radius: 100px!important;
+    border-bottom-right-radius: 100px!important;
+    background: #004EFF!important;
+    color: white;
+}
