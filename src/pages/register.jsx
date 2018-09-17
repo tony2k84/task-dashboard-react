@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import background from '../assets/background.jpeg';
-import { Segment, Form, Input, Button } from 'semantic-ui-react';
+import { Segment, Form, Input, Icon, Button } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
-import { doLogin } from '../redux/actions/user-actions';
+import { } from '../redux/actions/user-actions';
 
-class Login extends Component {
+class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -32,7 +32,6 @@ class Login extends Component {
         event.preventDefault();
         const { email, password } = this.state;
         this.props.doLogin(email, password);
-        this.props.getTaskTypes();
     }
     render() {
         const { email, password } = this.state;
@@ -49,13 +48,15 @@ class Login extends Component {
                                 <label>Password</label>
                                 <Input name='password' onChange={this.handleInputChange} value={password} type='password' icon='lock' iconPosition='left' placeholder='Password' />
                             </Form.Field>
+
                             <Button floated='right' style={{marginTop: 30}}
-                                    onClick={this.handleSubmit}
-                                    basic className={"selected"} type='submit'>LOGIN</Button>
+                                onClick={this.handleSubmit}
+                                basic className={"selected"} type='submit'>REGISTER</Button>
                         </Form>
                     </Segment>
-                    <div className={"xlink"} onClick={()=>this.props.history.push('/register')}>
-                        Dont have an account yet?
+                    <div className={"xlink"} onClick={() => this.props.history.replace('/')}>
+                        <Icon name='chevron left' />
+                        Back to LOGIN
                     </div>
                 </div>
             </div>
@@ -65,12 +66,11 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        LOGIN_STATUS: state.user.meta.LOGIN_STATUS,
     }
 }
 
 const mapDispatchToProps = {
-    doLogin,
+
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Register)

@@ -106,3 +106,8 @@
     background: #004EFF!important;
     color: white;
 }
+
+.xlink{
+    cursor: pointer;
+    color: #BBBBBB;
+}

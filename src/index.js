@@ -11,7 +11,7 @@ import "semantic-ui-css/semantic.min.css";
 import './index.css';
 import Home from './pages/home';
 import Login from './pages/login';
-
+import Register from './pages/register';
 
 const provider = (
 	<Provider store={store}>
@@ -19,6 +19,7 @@ const provider = (
 			<ConnectedRouter history={history}>
 				<div style={{ minHeight: 600, height: '100vh' }}>
 					<Route exact path="/" component={Login} />
+					<Route exact path="/register" component={Register} />
 					<Route path="/home" component={Home} />
 				</div>
 			</ConnectedRouter>

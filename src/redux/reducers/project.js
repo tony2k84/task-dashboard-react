@@ -9,6 +9,7 @@ import {
 	ADD_PROJECT_MEMBER_PENDING,
 	ADD_PROJECT_MEMBER_FULFILLED,
 	ADD_PROJECT_MEMBER_REJECTED,
+	SELECT_PROJECT_FULFILLED,
 } from '../actions/action-types';
 
 const initialMetaState = {
@@ -18,6 +19,7 @@ const initialMetaState = {
 }
 
 const initialDataState = {
+	selectedProject: {},
 	projects: []
 }
 
@@ -51,6 +53,8 @@ function dataReducer(state = initialDataState, action) {
 	switch (action.type) {
 		case GET_PROJECTS_FULFILLED:
 			return { ...state, projects: action.payload.data.projects }
+		case SELECT_PROJECT_FULFILLED:
+			return { ...state, selectedProject: action.payload.data}	
 		default:
 			return state;
 	}

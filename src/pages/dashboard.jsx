@@ -3,9 +3,8 @@ import { Button, Grid, Header, Icon } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
-import { doGetOverDueTasks, doGetUpcomingTasks } from '../redux/actions/task-actions';
+import { addTask } from '../redux/actions/task';
 import AddTask from '../components/new-task';
-
 
 class Dashboard extends Component {
     constructor(props) {
@@ -25,8 +24,8 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.props.doGetOverDueTasks();
-        this.props.doGetUpcomingTasks();
+        //this.props.doGetOverDueTasks();
+        //this.props.doGetUpcomingTasks();
     }
 
     toDateFormat1 = (timestamp) => {
@@ -127,12 +126,14 @@ class Dashboard extends Component {
         this.setState({ activeUpcomingFilter: value })
     }
 
-    updateProject = () => {
-        console.log('update project');
+    saveTask = (type, group, nextRun, owner) => {
+        const {token, selectedProject} = this.props;
+        this.props.addTask(token, selectedProject.projectId, type, group, nextRun, owner);
     }
 
     render() {
         const { activeUpcomingFilter } = this.state;
+        const { selectedProject } = this.props;
         return (
             <Grid className={"content"} columns={3}>
                 <Grid.Column width={6}>
@@ -163,7 +164,7 @@ class Dashboard extends Component {
                     <Header as="h4">&nbsp;<Header.Subheader>&nbsp;</Header.Subheader></Header>
                     <div className={"content-col"}>
                         <div className={"row space-between align-center"}>
-                            <Header style={{ margin: 0 }} as="h3">Project Do</Header>
+                            <Header style={{ margin: 0 }} as="h3">{selectedProject.projectName}</Header>
                             <Button
                                 onClick={() => this.addTask.current.open()}
                                 basic className={"default"} compact>New Task</Button>
@@ -176,7 +177,8 @@ class Dashboard extends Component {
                         {this.renderTaskTypes()}
                     </div>
                     <AddTask ref={this.addTask}
-                        taskAdded={this.updateProject} />
+                        taskTypes={this.props.taskTypes}
+                        addTask={this.saveTask} />
                 </Grid.Column>
             </Grid>
         );
@@ -185,16 +187,16 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        GET_OVERDUE_TASKS_STATUS: state.task.meta.GET_OVERDUE_TASKS_STATUS,
-        GET_UPCOMING_TASKS_STATUS: state.task.meta.GET_UPCOMING_TASKS_STATUS,
-        overDueTasks: state.task.data.overDueTasks,
-        upcomingTasks: state.task.data.upcomingTasks,
+        token: state.user.data.token,
+        selectedProject: state.project.data.selectedProject,
+        taskTypes: state.taskType.data.taskTypes,
+        overDueTasks: [],
+        upcomingTasks: [],
     }
 }
 
 const mapDispatchToProps = {
-    doGetOverDueTasks,
-    doGetUpcomingTasks
+    addTask,
 }
 
 //export default Dashboard;

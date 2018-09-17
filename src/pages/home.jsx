@@ -7,6 +7,9 @@ import SwitchProject from '../components/switch-project';
 
 //redux
 import { connect } from 'react-redux';
+import { selectProject } from '../redux/actions/project';
+import { getTaskTypes } from '../redux/actions/task-type';
+
 class Home extends Component {
     constructor(props) {
         super(props);
@@ -32,6 +35,12 @@ class Home extends Component {
         this.switchProj = React.createRef();
     }
 
+    componentDidMount() {
+        const {getTaskTypes, token} = this.props;
+        getTaskTypes(token);
+    }
+    
+
     toDateFormat1 = (timestamp) => {
         var d = new Date(timestamp);
         const { months } = this.state;
@@ -52,7 +61,10 @@ class Home extends Component {
     }
 
     updateProject = (project) => {
-        this.setState({selectedProject: project})
+        const {token} = this.props;
+        const {projectId, name} = project;
+        this.setState({selectedProject: project});
+        this.props.selectProject(token, projectId, name);
     }
     render() {
         const { selectedProject, application, profileOptions } = this.state;
@@ -64,7 +76,7 @@ class Home extends Component {
                     <div className={"row align-center padding-horizontal"}>
                         <Label as='a' size='large'
                             onClick={()=>this.switchProj.current.open()}>
-                            <Icon name='barcode' />
+                            <Icon name='bullseye' />
                             {selectedProject.name}
                         </Label>
                         <div style={{ padding: 10 }} />
@@ -92,13 +104,15 @@ class Home extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        token: state.user.data.token,
         name: state.user.data.userDetails.name,
         members: state.user.data.userDetails.members,
     }
 }
 
 const mapDispatchToProps = {
-    
+    selectProject,
+    getTaskTypes,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

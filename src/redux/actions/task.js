@@ -1,5 +1,6 @@
 // report related actions
 import axios from 'axios';
+const ADD_TASK_URL = 'http://localhost:9001/v1/task';
 
 var getOverDueTasks = (sessionId, projectId) => {
     //return axios.get(GET_REPORTS_API_URL(sessionId)); 
@@ -44,7 +45,20 @@ var getUpcomingTasks = (sessionId, projectId) => {
 
 }
 
+var _addTask = (token, projectId, type, group, nextRun, owner) => {
+    return axios.post(ADD_TASK_URL,
+        { projectId, type, group, nextRun, owner },
+        { headers: { 'Authorization': token } });
+}
+
 //action creators
+export const addTask = (token, projectId, type, group, nextRun, owner) => {
+    return dispatch => dispatch({
+        type: 'ADD_TASK',
+        payload: _addTask(token, projectId, type, group, nextRun, owner)
+    });
+}
+
 export const doGetOverDueTasks = (sessionId, projectId) => {
     return dispatch => dispatch({
         type: 'GET_OVERDUE_TASKS',
