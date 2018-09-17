@@ -47,6 +47,10 @@
     align-items: center;
 }
 
+.justify-center{
+    justify-content: center;
+}
+
 .color-default{
     color: #5D5D5D;
 }

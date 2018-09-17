@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Button, Icon, Header, Form } from 'semantic-ui-react';
+import { Modal, Button, Header, Form } from 'semantic-ui-react';
 
 export default class AddTask extends Component {
     constructor(props) {

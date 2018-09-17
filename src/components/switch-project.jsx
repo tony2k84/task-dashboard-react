@@ -6,10 +6,6 @@ export default class SwitchProject extends Component {
         super(props);
         this.state = {
             modalOpen: false,
-            projects: [
-                { name: 'Maxis AM', tasks: 100 },
-                { name: 'Maxis AD', tasks: 100 }
-            ]
         }
     }
     open = () => this.setState({
@@ -17,24 +13,23 @@ export default class SwitchProject extends Component {
     })
     close = () => this.setState({ modalOpen: false })
 
-    selectProject = (projectId) => {
-        this.props.selectProject(projectId);
+    selectProject = (project) => {
+        this.props.selectProject(project);
         this.close();
     }
     renderProjects = () => {
-        const { projects } = this.state;
+        const { projects } = this.props;
         return projects.map((item, index) => {
             return (
                 <div key={index} className={"row space-between padding-vertical"}>
                     <div className="row align-center">
-                        <Icon name="barcode" />
+                        <Icon name="bullseye" />
                         <div style={{ paddingLeft: 5 }}>
                             <div>{item.name}</div>
-                            <div style={{ fontSize: 13, color: '#939090' }}>{item.tasks} Tasks</div>
                         </div>
                     </div>
                     <span style={{ fontSize: 12 }}>
-                        <Button onClick={()=>this.selectProject(item.name)} 
+                        <Button onClick={()=>this.selectProject(item)} 
                             basic className={"selected"}>SELECT</Button>
                     </span>
                 </div>

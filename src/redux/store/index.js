@@ -1,35 +1,43 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import { routerMiddleware } from 'react-router-redux';
-import thunk from 'redux-thunk';
-import createHistory from 'history/createBrowserHistory';
-import rootReducer from '../reducers';
+import { createBrowserHistory as createHistory } from 'history'
+import { applyMiddleware, compose, createStore } from 'redux'
+import { connectRouter, routerMiddleware } from 'connected-react-router'
 import promiseMiddleware from 'redux-promise-middleware'
-
+import thunk from 'redux-thunk'
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
-
-const initialState = {};
-const enhancers = [];
-export const history = createHistory({basename: 'task-dashboard'});
-const middleware = [thunk, promiseMiddleware(), routerMiddleware(history)];
-
-if (process.env.NODE_ENV === 'development') {
-  const devToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION__;
-
-  if (typeof devToolsExtension === 'function') {
-    enhancers.push(devToolsExtension());
-  }
-}
-
-const composedEnhancers = compose(applyMiddleware(...middleware), ...enhancers);
-
-//export const store = createStore(rootReducer, initialState, composedEnhancers);
+import rootReducer from '../reducers'
 
 const persistConfig = {
   key: 'root',
   storage,
 }
+const history = createHistory()
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+const middleware = routerMiddleware(history);
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
-export const store = createStore(persistedReducer, initialState, composedEnhancers);
-export const persistor = persistStore(store);
+const composeEnhancers =
+  typeof window === 'object' &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+    }) : compose;
+
+const enhancer = composeEnhancers(
+  applyMiddleware(
+    middleware,
+    thunk,
+    promiseMiddleware()));
+
+let store = createStore(
+  connectRouter(history)(persistedReducer),
+  enhancer
+)
+
+let persistor = persistStore(store)
+
+
+export {
+  store,
+  persistor,
+  history
+}

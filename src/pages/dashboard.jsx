@@ -24,7 +24,7 @@ class Dashboard extends Component {
         this.addTask = React.createRef();
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.props.doGetOverDueTasks();
         this.props.doGetUpcomingTasks();
     }
@@ -164,7 +164,7 @@ class Dashboard extends Component {
                     <div className={"content-col"}>
                         <div className={"row space-between align-center"}>
                             <Header style={{ margin: 0 }} as="h3">Project Do</Header>
-                            <Button 
+                            <Button
                                 onClick={() => this.addTask.current.open()}
                                 basic className={"default"} compact>New Task</Button>
                         </div>
@@ -175,8 +175,8 @@ class Dashboard extends Component {
                         <Header as="h4">Task Types</Header>
                         {this.renderTaskTypes()}
                     </div>
-                    <AddTask ref={this.addTask} 
-                        taskAdded={this.updateProject}/>
+                    <AddTask ref={this.addTask}
+                        taskAdded={this.updateProject} />
                 </Grid.Column>
             </Grid>
         );
@@ -185,18 +185,17 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        GET_OVERDUE_TASKS_STATUS: state.tasks.meta.GET_OVERDUE_TASKS_STATUS,
-        GET_UPCOMING_TASKS_STATUS: state.tasks.meta.GET_UPCOMING_TASKS_STATUS,
-        overDueTasks: state.tasks.data.overDueTasks,
-        upcomingTasks: state.tasks.data.upcomingTasks,
+        GET_OVERDUE_TASKS_STATUS: state.task.meta.GET_OVERDUE_TASKS_STATUS,
+        GET_UPCOMING_TASKS_STATUS: state.task.meta.GET_UPCOMING_TASKS_STATUS,
+        overDueTasks: state.task.data.overDueTasks,
+        upcomingTasks: state.task.data.upcomingTasks,
     }
-  }
-  
-  const mapDispatchToProps = {
+}
+
+const mapDispatchToProps = {
     doGetOverDueTasks,
     doGetUpcomingTasks
-  }
-  
-  //export default Dashboard;
-  export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
-  
+}
+
+//export default Dashboard;
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

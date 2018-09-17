@@ -34,7 +34,7 @@ function metaReducer(state = initialMetaState, action) {
 		case GET_UPCOMING_TASKS_REJECTED:
 			return { ...state, GET_UPCOMING_TASKS_STATUS: 'FAILED' }    
 		default:
-			return {...state};
+			return state;
 	}
 }
 
@@ -45,7 +45,7 @@ function dataReducer(state = initialDataState, action) {
         case GET_UPCOMING_TASKS_FULFILLED:
 				return { ...state, upcomingTasks: action.payload.data }
 		default:
-			return {...state};
+			return state;
 	}
 }
 

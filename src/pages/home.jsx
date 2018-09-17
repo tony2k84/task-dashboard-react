@@ -5,18 +5,20 @@ import Dashboard from './dashboard';
 import Admin from './admin';
 import SwitchProject from '../components/switch-project';
 
+//redux
+import { connect } from 'react-redux';
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedProject: 'Maxis AM',
+            selectedProject: props.members?props.members[0]:{projectId: '0', name: 'NO PROJECT'},
             application: '',
             profileOptions: [
                 {
                     key: 'user',
                     text: (
                         <span>
-                            Signed in as <strong>Abhishek</strong>
+                            Signed in as <strong>{props.name}</strong>
                         </span>
                     ),
                     disabled: true,
@@ -42,15 +44,15 @@ class Home extends Component {
                 this.props.history.push('/home/admin');
                 break;
             case 'LOGOUT':
-                console.log('TODO: LOGOUT');
+                this.props.history.replace('/');
                 break;
             default:
                 break;
         }
     }
 
-    updateProject = (projectId) => {
-        console.log('updated changed:', projectId);
+    updateProject = (project) => {
+        this.setState({selectedProject: project})
     }
     render() {
         const { selectedProject, application, profileOptions } = this.state;
@@ -63,12 +65,12 @@ class Home extends Component {
                         <Label as='a' size='large'
                             onClick={()=>this.switchProj.current.open()}>
                             <Icon name='barcode' />
-                            {selectedProject}
+                            {selectedProject.name}
                         </Label>
                         <div style={{ padding: 10 }} />
                         <Input icon='search' placeholder='Application Name' value={application} />
 
-                        <Dropdown onChange={this.handleMenuOptions} style={{ marginLeft: 10 }} trigger={<span><Icon name='user outline' />Hello, Abhishek</span>} options={profileOptions} />
+                        <Dropdown onChange={this.handleMenuOptions} style={{ marginLeft: 10 }} trigger={<span><Icon name='user outline' />Hello, {this.props.name}</span>} options={profileOptions} />
                     </div>
                 </div>
 
@@ -80,11 +82,23 @@ class Home extends Component {
                     <span style={{ color: '#939090' }}>All right reserved</span>
                 </div>
 
-                <SwitchProject ref={this.switchProj} 
+                <SwitchProject ref={this.switchProj}
+                    projects={this.props.members}
                     selectProject={this.updateProject}/>
             </div>
         );
     }
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+    return {
+        name: state.user.data.userDetails.name,
+        members: state.user.data.userDetails.members,
+    }
+}
+
+const mapDispatchToProps = {
+    
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
