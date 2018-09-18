@@ -6,7 +6,6 @@ var _getTaskTypes = (token) => {
 }
 
 var _addTaskType = (token, type) => {
-    console.log(token, type);
     return axios.post(TASK_TYPE_URL, {type}, {headers: {'Authorization': token}});
 }
 

@@ -10,6 +10,7 @@ import rootReducer from '../reducers'
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: ['router']
 }
 const history = createHistory()
 const persistedReducer = persistReducer(persistConfig, rootReducer);

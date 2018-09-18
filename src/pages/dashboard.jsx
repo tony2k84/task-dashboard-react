@@ -82,13 +82,13 @@ class Dashboard extends Component {
     renderDueTasks = () => {
         const { overDueTasks } = this.props;
         return overDueTasks.map((item, index) => {
-            const days = this.getDaysBetween(item.due, Date.now());
+            const days = this.getDaysBetween(item.nextRun, Date.now());
             return (
                 <div key={index} className={"row space-between padding-vertical"}>
                     <div className="row align-center">
                         <Icon className={days === 0 ? "color-ember" : "color-red"} name="dot circle" />
                         <div style={{ paddingLeft: 5 }}>
-                            <div>{item.application} {item.type}</div>
+                            <div>{item.group} {item.type}</div>
                             <div style={{ fontSize: 13, color: '#939090' }}>@{item.owner}</div>
                         </div>
                     </div>
@@ -190,8 +190,8 @@ const mapStateToProps = (state) => {
         token: state.user.data.token,
         selectedProject: state.project.data.selectedProject,
         taskTypes: state.taskType.data.taskTypes,
-        overDueTasks: [],
-        upcomingTasks: [],
+        overDueTasks: state.task.data.tasks.filter(item => item.nextRun < Date.now()),
+        upcomingTasks: state.task.data.tasks.filter(item => item.nextRun > Date.now()),
     }
 }
 

@@ -1,38 +1,31 @@
 import { combineReducers } from 'redux';
 import {
-	GET_OVERDUE_TASKS_PENDING,
-	GET_OVERDUE_TASKS_FULFILLED,
-    GET_OVERDUE_TASKS_REJECTED,
-    GET_UPCOMING_TASKS_PENDING,
-    GET_UPCOMING_TASKS_FULFILLED,
-    GET_UPCOMING_TASKS_REJECTED
+	GET_PROJECT_TASKS_PENDING,
+	GET_PROJECT_TASKS_FULFILLED,
+	GET_PROJECT_TASKS_REJECTED
 } from '../actions/action-types';
 
+import { PURGE } from 'redux-persist';
+
 const initialMetaState = {
-    GET_OVERDUE_TASKS_STATUS: 'DEFAULT',
-    GET_UPCOMING_TASKS_STATUS: 'DEFAULT',
+	GET_TASKS_STATUS: 'DEFAULT',
 }
 
 const initialDataState = {
-	overDueTasks: [],
-	upcomingTasks: [],
+	tasks: [],
 }
 
 function metaReducer(state = initialMetaState, action) {
 	// listen to only the action interested for this reducer
 	switch (action.type) {
-		case GET_OVERDUE_TASKS_PENDING:
-			return { ...state, GET_OVERDUE_TASKS_STATUS: 'PENDING' }
-		case GET_OVERDUE_TASKS_FULFILLED:
-			return { ...state, GET_OVERDUE_TASKS_STATUS: 'SUCCESS' }
-		case GET_OVERDUE_TASKS_REJECTED:
-            return { ...state, GET_OVERDUE_TASKS_STATUS: 'FAILED' }
-        case GET_UPCOMING_TASKS_PENDING:
-			return { ...state, GET_UPCOMING_TASKS_STATUS: 'PENDING' }
-		case GET_UPCOMING_TASKS_FULFILLED:
-			return { ...state, GET_UPCOMING_TASKS_STATUS: 'SUCCESS' }
-		case GET_UPCOMING_TASKS_REJECTED:
-			return { ...state, GET_UPCOMING_TASKS_STATUS: 'FAILED' }    
+		case GET_PROJECT_TASKS_PENDING:
+			return { ...state, GET_TASKS_STATUS: 'PENDING' }
+		case GET_PROJECT_TASKS_FULFILLED:
+			return { ...state, GET_TASKS_STATUS: 'SUCCESS' }
+		case GET_PROJECT_TASKS_REJECTED:
+			return { ...state, GET_TASKS_STATUS: 'FAILED' }
+		case PURGE:
+			return initialMetaState;
 		default:
 			return state;
 	}
@@ -40,10 +33,10 @@ function metaReducer(state = initialMetaState, action) {
 
 function dataReducer(state = initialDataState, action) {
 	switch (action.type) {
-		case GET_OVERDUE_TASKS_FULFILLED:
-			return { ...state, overDueTasks: action.payload.data }
-        case GET_UPCOMING_TASKS_FULFILLED:
-				return { ...state, upcomingTasks: action.payload.data }
+		case GET_PROJECT_TASKS_FULFILLED:
+			return { ...state, tasks: action.payload.data.tasks }
+		case PURGE:
+			return initialDataState;
 		default:
 			return state;
 	}

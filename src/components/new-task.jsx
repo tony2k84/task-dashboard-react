@@ -9,14 +9,7 @@ export default class AddTask extends Component {
             type: '', 
             group: '', 
             nextRun: '', 
-            owner: '',
-            taskTypes: props.taskTypes.map((item,index) => {
-                var newItem = {};
-                newItem.key = index;
-                newItem.value = item.type;
-                newItem.text = item.type;
-                return newItem;
-            })
+            owner: ''
         }
     }
     open = () => this.setState({
@@ -40,7 +33,8 @@ export default class AddTask extends Component {
     }
 
     render() {
-        const {modalOpen, type, group, nextRun, owner, taskTypes} = this.state;
+        const {modalOpen, type, group, nextRun, owner} = this.state;
+        const {taskTypes} = this.props;
         return (
             <Modal size='mini' open={modalOpen} onClose={this.close}>
                 <Header icon='dot circle' content='New Task' />

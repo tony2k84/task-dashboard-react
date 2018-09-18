@@ -1,7 +1,7 @@
 import axios from 'axios';
 const PROJECT_URL = 'http://localhost:9001/v1/project';
 const PROJECT_MEMBER_URL = 'http://localhost:9001/v1/project/add-member';
-
+const GET_TASK_URL = 'http://localhost:9001/v1/task';
 
 var _getProjects = (token) => {
     return axios.get(PROJECT_URL, {headers: {'Authorization': token}});
@@ -17,9 +17,12 @@ var _addMember = (token, projectId, projectName, email) => {
 
 var _selectProject = (token, projectId, projectName) => {
     return new Promise((resolve, reject) => {
-        // call api and either return resolve o/**/r reject
         resolve({data: {projectId, projectName}});
     })
+}
+
+var _getProjectTasks = (token, projectId) => {
+    return axios.post(GET_TASK_URL, {projectId}, {headers: {'Authorization': token}});
 }
 
 //action creators
@@ -54,6 +57,7 @@ export const selectProject = (token, projectId, projectName) => {
         // get tasks for the project
         dispatch({
             type: 'GET_PROJECT_TASKS',
+            payload: _getProjectTasks(token, projectId)
         });
     }
 }

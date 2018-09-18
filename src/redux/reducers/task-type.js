@@ -1,16 +1,19 @@
 import { combineReducers } from 'redux';
 import {
-    GET_TASK_TYPES_PENDING,
-    GET_TASK_TYPES_FULFILLED,
-    GET_TASK_TYPES_REJECTED,
-    ADD_TASK_TYPE_PENDING,
-    ADD_TASK_TYPE_FULFILLED,
-    ADD_TASK_TYPE_REJECTED,
+	GET_TASK_TYPES_PENDING,
+	GET_TASK_TYPES_FULFILLED,
+	GET_TASK_TYPES_REJECTED,
+	ADD_TASK_TYPE_PENDING,
+	ADD_TASK_TYPE_FULFILLED,
+	ADD_TASK_TYPE_REJECTED,
 } from '../actions/action-types';
 
+import { PURGE } from 'redux-persist';
+
+
 const initialMetaState = {
-    GET_TASK_TYPE_STATUS: 'DEFAULT',
-    ADD_TASK_TYPE_STATUS: 'DEFUALT'
+	GET_TASK_TYPE_STATUS: 'DEFAULT',
+	ADD_TASK_TYPE_STATUS: 'DEFUALT'
 }
 
 const initialDataState = {
@@ -25,14 +28,16 @@ function metaReducer(state = initialMetaState, action) {
 		case GET_TASK_TYPES_FULFILLED:
 			return { ...state, GET_TASK_TYPE_STATUS: 'SUCCESS' }
 		case GET_TASK_TYPES_REJECTED:
-            return { ...state, GET_TASK_TYPE_STATUS: 'FAILED' }
-        case ADD_TASK_TYPE_PENDING:
+			return { ...state, GET_TASK_TYPE_STATUS: 'FAILED' }
+		case ADD_TASK_TYPE_PENDING:
 			return { ...state, ADD_TASK_TYPE_STATUS: 'PENDING' }
 		case ADD_TASK_TYPE_FULFILLED:
 			return { ...state, ADD_TASK_TYPE_STATUS: 'SUCCESS' }
 		case ADD_TASK_TYPE_REJECTED:
-            return { ...state, ADD_TASK_TYPE_STATUS: 'FAILED' }   
-        default:
+			return { ...state, ADD_TASK_TYPE_STATUS: 'FAILED' }
+		case PURGE:
+			return initialMetaState;
+		default:
 			return state;
 	}
 }
@@ -40,8 +45,10 @@ function metaReducer(state = initialMetaState, action) {
 function dataReducer(state = initialDataState, action) {
 	switch (action.type) {
 		case GET_TASK_TYPES_FULFILLED:
-            return { ...state, taskTypes: action.payload.data.taskTypes }
-        default:
+			return { ...state, taskTypes: action.payload.data.taskTypes }
+		case PURGE:
+			return initialDataState;
+		default:
 			return state;
 	}
 }

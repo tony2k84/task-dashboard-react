@@ -1,6 +1,6 @@
 // report related actions
 import axios from 'axios';
-const ADD_TASK_URL = 'http://localhost:9001/v1/task';
+const ADD_TASK_URL = 'http://localhost:9001/v1/task/add';
 
 var getOverDueTasks = (sessionId, projectId) => {
     //return axios.get(GET_REPORTS_API_URL(sessionId)); 

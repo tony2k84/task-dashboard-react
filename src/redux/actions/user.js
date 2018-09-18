@@ -1,13 +1,21 @@
 import axios from 'axios';
+import {persistor} from '../store';
+
 const LOGIN_URL = 'http://localhost:9001/v1/user/login';
 const REGISTER_URL = 'http://localhost:9001/v1/user/register';
+const LOGOUT_URL = 'http://localhost:9001/v1/user/logout'
 
 var _login = (email, password) => {
-    return axios.post(LOGIN_URL, {email, password});
+    return axios.post(LOGIN_URL, { email, password });
+}
+
+var _logout = (token) => {
+    persistor.purge();
+    return axios.post(LOGOUT_URL, {}, { headers: { 'Authorization': token } });
 }
 
 var _register = (name, email, password) => {
-    return axios.post(REGISTER_URL, {name, email, password});
+    return axios.post(REGISTER_URL, { name, email, password });
 }
 
 //action creators
@@ -16,6 +24,16 @@ export const login = (email, password) => {
         type: 'LOGIN',
         payload: _login(email, password)
     });
+}
+export const logout = (token) => {
+
+    return dispatch => {
+        dispatch({
+            type: 'LOGOUT',
+            payload: _logout(token)
+        });       
+    };
+
 }
 
 export const register = (name, email, password) => {
