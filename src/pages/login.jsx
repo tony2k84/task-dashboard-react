@@ -4,7 +4,8 @@ import { Segment, Form, Input, Button } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
-import { doLogin } from '../redux/actions/user-actions';
+import { login } from '../redux/actions/user';
+import { getTaskTypes } from '../redux/actions/task-type';
 
 class Login extends Component {
     constructor(props) {
@@ -16,6 +17,7 @@ class Login extends Component {
     }
     componentWillReceiveProps(nextProps) {
         if (this.props.LOGIN_STAUTS !== 'SUCCESS' && nextProps.LOGIN_STATUS === 'SUCCESS') {
+            this.props.getTaskTypes(nextProps.token);
             this.props.history.push('/home');
         }
     }
@@ -31,8 +33,7 @@ class Login extends Component {
     handleSubmit = (event) => {
         event.preventDefault();
         const { email, password } = this.state;
-        this.props.doLogin(email, password);
-        this.props.getTaskTypes();
+        this.props.login(email, password);
     }
     render() {
         const { email, password } = this.state;
@@ -49,12 +50,12 @@ class Login extends Component {
                                 <label>Password</label>
                                 <Input name='password' onChange={this.handleInputChange} value={password} type='password' icon='lock' iconPosition='left' placeholder='Password' />
                             </Form.Field>
-                            <Button floated='right' style={{marginTop: 30}}
-                                    onClick={this.handleSubmit}
-                                    basic className={"selected"} type='submit'>LOGIN</Button>
+                            <Button floated='right' style={{ marginTop: 20 }}
+                                onClick={this.handleSubmit}
+                                basic className={"selected"} type='submit'>LOGIN</Button>
                         </Form>
                     </Segment>
-                    <div className={"xlink"} onClick={()=>this.props.history.push('/register')}>
+                    <div className={"xlink"} onClick={() => this.props.history.push('/register')}>
                         Dont have an account yet?
                     </div>
                 </div>
@@ -66,11 +67,13 @@ class Login extends Component {
 const mapStateToProps = (state) => {
     return {
         LOGIN_STATUS: state.user.meta.LOGIN_STATUS,
+        token: state.user.data.token,
     }
 }
 
 const mapDispatchToProps = {
-    doLogin,
+    login,
+    getTaskTypes
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)
