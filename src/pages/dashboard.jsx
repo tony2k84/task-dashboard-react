@@ -3,8 +3,9 @@ import { Button, Grid, Header, Icon, Label } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
-import { addTask } from '../redux/actions/task';
+import { addTask, completeTask } from '../redux/actions/task';
 import AddTask from '../components/new-task';
+import CompleteTask from '../components/complete-task';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -15,16 +16,14 @@ class Dashboard extends Component {
             upcoming: 96,
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             activeUpcomingFilter: "1",
-            dueTaskCount: 0,
-            upcomingTaskCount: 0,
         }
         this.addTask = React.createRef();
+        this.completeTask = React.createRef();
     }
 
     componentDidMount() {
         
     }
-
     toDateFormat1 = (timestamp) => {
         var d = new Date(timestamp);
         const { months } = this.state;
@@ -33,12 +32,10 @@ class Dashboard extends Component {
         else
         return '(No History)'
     }
-
     getDaysBetween = (from, to) => {
         var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
         return Math.round(Math.abs((to - from) / (oneDay)));
     }
-
     renderTaskSummary = () => {
         const { totalTasksCount, overDueTasksCount, upcomingTasksCount } = this.props;
         return (
@@ -85,7 +82,10 @@ class Dashboard extends Component {
         return overDueTasks.map((item, index) => {
             const days = this.getDaysBetween(item.nextRun, Date.now());
             return (
-                <div key={index} className={"row space-between padding-vertical"}>
+                <div key={index} 
+                    style={{cursor: 'pointer'}}
+                    onClick={()=> console.log(this.completeTask.current.open(item))}
+                    className={"row space-between padding-vertical"}>
                     <div className="row align-center">
                         <Icon className={days === 0 ? "color-ember" : "color-red"} name="dot circle" />
                         <div style={{ paddingLeft: 5 }}>
@@ -136,7 +136,6 @@ class Dashboard extends Component {
             </div>
         )
     }
-
     updateUpcomingTasks = (e, { value }) => {
         this.setState({ activeUpcomingFilter: value })
     }
@@ -144,6 +143,12 @@ class Dashboard extends Component {
     saveTask = (type, group, description, nextRun, owner) => {
         const { token, selectedProject } = this.props;
         this.props.addTask(token, selectedProject.projectId, type, group, description, nextRun, owner);
+    }
+
+    closeTask = (taskId, lastRun, nextRun) => {
+        const { token, completeTask } = this.props;
+        const { projectId } = this.props.selectedProject;
+        completeTask(token, projectId, taskId, lastRun, nextRun);
     }
 
     render() {
@@ -194,6 +199,9 @@ class Dashboard extends Component {
                     <AddTask ref={this.addTask}
                         taskTypes={this.props.taskTypes}
                         addTask={this.saveTask} />
+
+                    <CompleteTask ref={this.completeTask}
+                        closeTask={this.closeTask} />
                 </Grid.Column>
             </Grid>
         );
@@ -216,6 +224,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
     addTask,
+    completeTask
 }
 
 //export default Dashboard;
