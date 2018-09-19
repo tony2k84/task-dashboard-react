@@ -97,13 +97,12 @@ class Home extends Component {
                     <div className={"row align-center padding-horizontal"}>
                         <Label as='a' size='large'
                             onClick={() => this.switchProj.current.open()}>
-                            <Icon name='bullseye' />
                             {selectedProject.projectName}
                         </Label>
-                        <div style={{ padding: 10 }} />
-                        <Input icon='search' placeholder='Task Type' name='taskType' value={taskType} onChange={this.handleInputChange} />
-                        <div style={{ padding: 10 }} />
+                        <div style={{ padding: 5 }} />
                         <Input icon='search' placeholder='Group Name' name='group' value={group} onChange={this.handleInputChange} />
+                        <div style={{ padding: 5 }} />
+                        <Input icon='search' placeholder='Task Type' name='taskType' value={taskType} onChange={this.handleInputChange} />
                         <Dropdown onChange={this.handleMenuOptions} style={{ marginLeft: 10 }} trigger={<span><Icon name='user outline' />Hello, {this.props.name}</span>} options={profileOptions} />
                     </div>
                 </div>

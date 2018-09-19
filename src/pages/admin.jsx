@@ -77,7 +77,7 @@ class Admin extends Component {
                         </div>
                     </div>
                     <span style={{ fontSize: 12 }}>
-                        <Button basic className={"default"}>DELETE</Button>
+                        <Button basic className={"default"} compact>DELETE</Button>
                     </span>
                 </div>
             )
@@ -89,14 +89,14 @@ class Admin extends Component {
             return (
                 <div key={index} className={"row space-between padding-vertical"}>
                     <div className="row align-center">
-                        <Icon name="barcode" />
+                        <Icon name="user outline" />
                         <div style={{ paddingLeft: 5 }}>
                             <div>{item.name}</div>
                             <div style={{ fontSize: 13, color: '#939090' }}>{item.email}</div>
                         </div>
                     </div>
                     <span style={{ fontSize: 12 }}>
-                        <Button basic className={"default"}>DELETE</Button>
+                        <Button basic className={"default"} compact>DELETE</Button>
                     </span>
                 </div>
             )
@@ -108,11 +108,11 @@ class Admin extends Component {
             return (
                 <div key={index} className={"row space-between padding-vertical"}>
                     <div className="row align-center">
-                        <Icon name="bookmark outline" className={"color-default"}/>
+                        <Icon name="bookmark" className={"color-default"}/>
                         <div style={{ paddingLeft: 5 }}>{item.type}</div>
                     </div>
                     <span style={{ fontSize: 12 }}>
-                        <Button basic className={"default"}>DELETE</Button>
+                        <Button basic className={"default"} compact>DELETE</Button>
                     </span>
                 </div>
             )

@@ -11,7 +11,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 10px 15px 10px;
+    padding: 20px 10px 15px 20px;
 }
 
 .main-container .content{
@@ -26,7 +26,7 @@
 .content-col{
     height: calc(100% - 50px);
     background-color: white;
-    padding: 20px;
+    padding: 10px;
 }
 
 .row{
@@ -68,8 +68,8 @@
 }
 
 .padding-vertical{
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .padding-horizontal{

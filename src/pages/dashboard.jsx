@@ -22,15 +22,15 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        
+
     }
     toDateFormat1 = (timestamp) => {
         var d = new Date(timestamp);
         const { months } = this.state;
-        if(timestamp)
-        return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+        if (timestamp)
+            return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
         else
-        return '(No History)'
+            return '(No History)'
     }
     getDaysBetween = (from, to) => {
         var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
@@ -70,7 +70,7 @@ class Dashboard extends Component {
         return tasksByTaskType.map((item, index) =>
             <div key={index} className={"row space-between color-default padding-vertical"}>
                 <div className={"row"}>
-                    <Icon className={"color-default"} name='bookmark outline' />
+                    <Icon className={"color-default"} name='bookmark' />
                     <span>{item[0]}</span>
                 </div>
                 <span>{item[1]}</span>
@@ -82,27 +82,17 @@ class Dashboard extends Component {
         return overDueTasks.map((item, index) => {
             const days = this.getDaysBetween(item.nextRun, Date.now());
             return (
-                <div key={index} 
-                    style={{cursor: 'pointer'}}
-                    onClick={()=> console.log(this.completeTask.current.open(item))}
-                    className={"row space-between padding-vertical"}>
-                    <div className="row align-center">
-                        <Icon className={days === 0 ? "color-ember" : "color-red"} name="dot circle" />
-                        <div style={{ paddingLeft: 5 }}>
-                            <div>{item.description}</div>
-                            <div className={"row align-center"}
-                                style={{ fontSize: 13, color: '#939090', marginTop: 3 }}>
-                                <span style={{ marginBottom: 3, marginRight: 3 }}>@{item.owner}</span>
-                                <Label.Group size='small'>
-                                    <Label>{item.group}</Label>
-                                    <Label>{item.type}</Label>
-                                </Label.Group>
-                            </div>
-                        </div>
-                    </div>
+                <div key={index}
+                    style={{ cursor: 'pointer', padding: 10, }}
+                    onClick={() => console.log(this.completeTask.current.open(item))}
+                    className={"row space-between align-center"}>
+                    <Header as='h5' style={{ margin: 0 }}>
+                        {item.description}
+                        <Header.Subheader>{item.group}/{item.type} @{item.owner}</Header.Subheader>
+                    </Header>
                     <span style={{ textAlign: 'right', fontSize: 12 }} className={days === 0 ? "color-ember" : "color-red"}>
                         {
-                            days === 0 ? "TODAY" : days + " DAYS OVERDUE"
+                            days === 0 ? "TODAY" : days === 1 ? "YESTERDAY" : days + " DAYS AGO"
                         }
                     </span>
                 </div>
@@ -112,28 +102,26 @@ class Dashboard extends Component {
     }
     renderUpcomingTasks = () => {
         const { upcomingTasks } = this.props;
-        return upcomingTasks.map((item, index) =>
-            <div key={index} className={"row space-between padding-vertical"}>
-                <div className="row align-center">
-                    <Icon className={"color-blue"} name="dot circle" />
-                    <div style={{ paddingLeft: 5 }}>
-                        <div>{item.description}</div>
-                        <div className={"row align-center"}
-                            style={{ fontSize: 13, color: '#939090', marginTop: 3 }}>
-                            <span style={{ marginBottom: 3, marginRight: 3 }}>@{item.owner}</span>
-                            <Label.Group size='small'>
-                                <Label>{item.group}</Label>
-                                <Label>{item.type}</Label>
-                            </Label.Group>
-                        </div>
-                    </div>
-                </div>
-                <div style={{ fontSize: 12, textAlign: 'right' }}>
-                    <div style={{ color: '#707070' }}>{this.getDaysBetween(Date.now(), item.nextRun)} DAYS TO GO</div>
-                    <div style={{ marginTop: 5, color: '#B2B2B2' }}>Last on {this.toDateFormat1(item.lastRun)}</div>
-                </div>
+        return upcomingTasks.map((item, index) => {
+            const days = this.getDaysBetween(Date.now(), item.nextRun);
+            return (
+                <div key={index}
+                    style={{ cursor: 'pointer', padding: 10, }}
+                    onClick={() => console.log(this.completeTask.current.open(item))}
+                    className={"row space-between align-center"}>
+                    <Header as='h5' style={{ margin: 0 }}>
+                        {item.description}
+                        <Header.Subheader>{item.group}/{item.type} @{item.owner}</Header.Subheader>
+                    </Header>
+                    <span style={{ textAlign: 'right', fontSize: 12 }} className={"color-default"}>
+                        {
+                            days === 1 ? "TOMORROW" : days + " DAYS TO AGO"
+                        }
+                    </span>
 
-            </div>
+                </div>
+            )
+        }
         )
     }
     updateUpcomingTasks = (e, { value }) => {
@@ -152,14 +140,13 @@ class Dashboard extends Component {
     }
 
     render() {
-        const { activeUpcomingFilter } = this.state;
         const { selectedProject, overDueTasksCount, upcomingTasksCount } = this.props;
         return (
             <Grid className={"content"} columns={3}>
                 <Grid.Column width={6}>
                     <Header as="h4" style={{ color: '#FF0000' }}>
                         Overdue Tasks
-                            <Header.Subheader>{overDueTasksCount} Tasks</Header.Subheader>
+                        <Header.Subheader>{overDueTasksCount} Tasks</Header.Subheader>
                     </Header>
                     <div className={"content-col"}>
                         {this.renderDueTasks()}
@@ -171,25 +158,19 @@ class Dashboard extends Component {
                         <Header.Subheader>{upcomingTasksCount} Tasks</Header.Subheader>
                     </Header>
                     <div className={"content-col"}>
-                        <div className={"row space-between"}>
-                            <Button value="1" className={activeUpcomingFilter === "1" ? "selected" : "default"} basic onClick={this.updateUpcomingTasks}>All Upcoming</Button>
-                            <Button value="2" className={activeUpcomingFilter === "2" ? "selected" : "default"} basic onClick={this.updateUpcomingTasks}>Due in 7 Days</Button>
-                            <Button value="3" className={activeUpcomingFilter === "3" ? "selected" : "default"} basic onClick={this.updateUpcomingTasks}>Due in 30 Days</Button>
-                        </div>
-                        <div style={{ padding: 10 }} />
                         {this.renderUpcomingTasks()}
                     </div>
                 </Grid.Column>
                 <Grid.Column width={4}>
                     <Header as="h4">&nbsp;<Header.Subheader>&nbsp;</Header.Subheader></Header>
-                    <div className={"content-col"}>
+                    <div className={"content-col"} style={{padding: 15}}>
                         <div className={"row space-between align-center"}>
                             <Header style={{ margin: 0 }} as="h3">{selectedProject.projectName}</Header>
                             <Button
                                 onClick={() => this.addTask.current.open()}
                                 basic className={"default"} compact>New Task</Button>
                         </div>
-
+                        
                         <Header as="h4">Task Summary</Header>
                         {this.renderTaskSummary()}
 
