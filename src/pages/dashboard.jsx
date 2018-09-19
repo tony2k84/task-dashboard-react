@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Grid, Header, Icon } from 'semantic-ui-react';
+import { Button, Grid, Header, Icon, Label } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
@@ -13,25 +13,25 @@ class Dashboard extends Component {
             totalTasks: 100,
             overDue: 4,
             upcoming: 96,
-            taskTypes: [
-                { type: 'SSL Renewal', count: 100 },
-                { type: 'Re-Index', count: 40 }
-            ],
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            activeUpcomingFilter: "1"
+            activeUpcomingFilter: "1",
+            dueTaskCount: 0,
+            upcomingTaskCount: 0,
         }
         this.addTask = React.createRef();
     }
 
     componentDidMount() {
-        //this.props.doGetOverDueTasks();
-        //this.props.doGetUpcomingTasks();
+        
     }
 
     toDateFormat1 = (timestamp) => {
         var d = new Date(timestamp);
         const { months } = this.state;
+        if(timestamp)
         return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+        else
+        return '(No History)'
     }
 
     getDaysBetween = (from, to) => {
@@ -40,7 +40,7 @@ class Dashboard extends Component {
     }
 
     renderTaskSummary = () => {
-        const { totalTasks, overDue, upcoming } = this.state;
+        const { totalTasksCount, overDueTasksCount, upcomingTasksCount } = this.props;
         return (
             <React.Fragment>
                 <div className={"row space-between color-default padding-vertical"}>
@@ -48,34 +48,35 @@ class Dashboard extends Component {
                         <Icon className={"color-default"} name='dot circle' />
                         <span>Tasks</span>
                     </div>
-                    <span>{totalTasks}</span>
+                    <span>{totalTasksCount}</span>
                 </div>
                 <div className={"row space-between color-default padding-vertical"}>
                     <div className={"row"}>
                         <Icon className={"color-red"} name='dot circle' />
                         <span>Over due</span>
                     </div>
-                    <span>{overDue}</span>
+                    <span>{overDueTasksCount}</span>
                 </div>
                 <div className={"row space-between color-default padding-vertical"}>
                     <div className={"row"}>
                         <Icon className={"color-blue"} name='dot circle' />
                         <span>Upcoming</span>
                     </div>
-                    <span>{upcoming}</span>
+                    <span>{upcomingTasksCount}</span>
                 </div>
             </React.Fragment>
         )
     }
     renderTaskTypes = () => {
-        const { taskTypes } = this.state;
-        return taskTypes.map((item, index) =>
+
+        const { tasksByTaskType } = this.props;
+        return tasksByTaskType.map((item, index) =>
             <div key={index} className={"row space-between color-default padding-vertical"}>
                 <div className={"row"}>
                     <Icon className={"color-default"} name='bookmark outline' />
-                    <span>{item.type}</span>
+                    <span>{item[0]}</span>
                 </div>
-                <span>{item.count}</span>
+                <span>{item[1]}</span>
             </div>
         )
     }
@@ -88,11 +89,18 @@ class Dashboard extends Component {
                     <div className="row align-center">
                         <Icon className={days === 0 ? "color-ember" : "color-red"} name="dot circle" />
                         <div style={{ paddingLeft: 5 }}>
-                            <div>{item.group} {item.type}</div>
-                            <div style={{ fontSize: 13, color: '#939090' }}>@{item.owner}</div>
+                            <div>{item.description}</div>
+                            <div className={"row align-center"}
+                                style={{ fontSize: 13, color: '#939090', marginTop: 3 }}>
+                                <span style={{ marginBottom: 3, marginRight: 3 }}>@{item.owner}</span>
+                                <Label.Group size='small'>
+                                    <Label>{item.group}</Label>
+                                    <Label>{item.type}</Label>
+                                </Label.Group>
+                            </div>
                         </div>
                     </div>
-                    <span style={{ fontSize: 12 }} className={days === 0 ? "color-ember" : "color-red"}>
+                    <span style={{ textAlign: 'right', fontSize: 12 }} className={days === 0 ? "color-ember" : "color-red"}>
                         {
                             days === 0 ? "TODAY" : days + " DAYS OVERDUE"
                         }
@@ -109,13 +117,20 @@ class Dashboard extends Component {
                 <div className="row align-center">
                     <Icon className={"color-blue"} name="dot circle" />
                     <div style={{ paddingLeft: 5 }}>
-                        <div>{item.application} {item.type}</div>
-                        <div style={{ fontSize: 13, color: '#939090' }}>@{item.owner}</div>
+                        <div>{item.description}</div>
+                        <div className={"row align-center"}
+                            style={{ fontSize: 13, color: '#939090', marginTop: 3 }}>
+                            <span style={{ marginBottom: 3, marginRight: 3 }}>@{item.owner}</span>
+                            <Label.Group size='small'>
+                                <Label>{item.group}</Label>
+                                <Label>{item.type}</Label>
+                            </Label.Group>
+                        </div>
                     </div>
                 </div>
-                <div style={{ fontSize: 12 }}>
-                    <div style={{ color: '#707070' }}>{this.getDaysBetween(Date.now(), item.due)} DAYS TO GO</div>
-                    <div style={{ color: '#B2B2B2' }}>Last on {this.toDateFormat1(item.last)}</div>
+                <div style={{ fontSize: 12, textAlign: 'right' }}>
+                    <div style={{ color: '#707070' }}>{this.getDaysBetween(Date.now(), item.nextRun)} DAYS TO GO</div>
+                    <div style={{ marginTop: 5, color: '#B2B2B2' }}>Last on {this.toDateFormat1(item.lastRun)}</div>
                 </div>
 
             </div>
@@ -126,20 +141,20 @@ class Dashboard extends Component {
         this.setState({ activeUpcomingFilter: value })
     }
 
-    saveTask = (type, group, nextRun, owner) => {
-        const {token, selectedProject} = this.props;
-        this.props.addTask(token, selectedProject.projectId, type, group, nextRun, owner);
+    saveTask = (type, group, description, nextRun, owner) => {
+        const { token, selectedProject } = this.props;
+        this.props.addTask(token, selectedProject.projectId, type, group, description, nextRun, owner);
     }
 
     render() {
         const { activeUpcomingFilter } = this.state;
-        const { selectedProject } = this.props;
+        const { selectedProject, overDueTasksCount, upcomingTasksCount } = this.props;
         return (
             <Grid className={"content"} columns={3}>
                 <Grid.Column width={6}>
                     <Header as="h4" style={{ color: '#FF0000' }}>
                         Overdue Tasks
-                            <Header.Subheader>4 Tasks</Header.Subheader>
+                            <Header.Subheader>{overDueTasksCount} Tasks</Header.Subheader>
                     </Header>
                     <div className={"content-col"}>
                         {this.renderDueTasks()}
@@ -148,7 +163,7 @@ class Dashboard extends Component {
                 <Grid.Column width={6}>
                     <Header as="h4" style={{ color: '#004EFF' }}>
                         Upcoming Tasks
-                            <Header.Subheader>50 Tasks</Header.Subheader>
+                        <Header.Subheader>{upcomingTasksCount} Tasks</Header.Subheader>
                     </Header>
                     <div className={"content-col"}>
                         <div className={"row space-between"}>
@@ -190,8 +205,12 @@ const mapStateToProps = (state) => {
         token: state.user.data.token,
         selectedProject: state.project.data.selectedProject,
         taskTypes: state.taskType.data.taskTypes,
-        overDueTasks: state.task.data.tasks.filter(item => item.nextRun < Date.now()),
-        upcomingTasks: state.task.data.tasks.filter(item => item.nextRun > Date.now()),
+        totalTasksCount: state.task.data.totalTasksCount,
+        overDueTasksCount: state.task.data.overDueTasksCount,
+        upcomingTasksCount: state.task.data.upcomingTasksCount,
+        overDueTasks: state.task.data.overDueTasks,
+        upcomingTasks: state.task.data.upcomingTasks,
+        tasksByTaskType: state.task.data.tasksByTaskType,
     }
 }
 

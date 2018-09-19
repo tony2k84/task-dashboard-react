@@ -54,7 +54,7 @@ export const selectProject = (token, projectId, projectName) => {
             type: 'SELECT_PROJECT',
             payload: _selectProject(token, projectId, projectName)
         });
-        // get tasks for the project
+
         dispatch({
             type: 'GET_PROJECT_TASKS',
             payload: _getProjectTasks(token, projectId)

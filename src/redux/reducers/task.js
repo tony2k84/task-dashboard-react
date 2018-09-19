@@ -5,6 +5,9 @@ import {
 	GET_PROJECT_TASKS_REJECTED
 } from '../actions/action-types';
 
+import countBy from 'lodash/countBy';
+import toPairs from 'lodash/toPairs';
+
 import { PURGE } from 'redux-persist';
 
 const initialMetaState = {
@@ -12,7 +15,12 @@ const initialMetaState = {
 }
 
 const initialDataState = {
-	tasks: [],
+	overDueTasks: [],
+	upcomingTasks: [],
+	totalTasksCount: 0,
+	overDueTasksCount: 0,
+	upcomingTasksCount: 0,
+	tasksByTaskType: {},
 }
 
 function metaReducer(state = initialMetaState, action) {
@@ -34,7 +42,21 @@ function metaReducer(state = initialMetaState, action) {
 function dataReducer(state = initialDataState, action) {
 	switch (action.type) {
 		case GET_PROJECT_TASKS_FULFILLED:
-			return { ...state, tasks: action.payload.data.tasks }
+			const tasks = action.payload.data.tasks;
+			const totalTasksCount = tasks.length;
+			const overDueTasks = tasks.filter(item => item.nextRun < Date.now());
+			const upcomingTasks = tasks.filter(item => item.nextRun > Date.now());
+			const overDueTasksCount = overDueTasks.length;
+			const upcomingTasksCount = upcomingTasks.length;
+			const byTaskTypes = countBy(tasks, 'type');
+			return { ...state, 
+					overDueTasks,
+					upcomingTasks,
+					totalTasksCount,
+					overDueTasksCount,
+					upcomingTasksCount,
+					tasksByTaskType: toPairs(byTaskTypes),
+				}
 		case PURGE:
 			return initialDataState;
 		default:

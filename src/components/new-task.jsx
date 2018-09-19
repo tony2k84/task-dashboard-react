@@ -7,7 +7,8 @@ export default class AddTask extends Component {
         this.state = {
             modalOpen: false,
             type: '', 
-            group: '', 
+            group: '',
+            description: '', 
             nextRun: '', 
             owner: ''
         }
@@ -18,8 +19,10 @@ export default class AddTask extends Component {
     close = () => this.setState({ modalOpen: false })
 
     saveTask = () => {
-        const {type, group, nextRun, owner} = this.state;
-        this.props.addTask(type, group, nextRun, owner);
+        const {type, group, description, nextRun, owner} = this.state;
+        var dateSplit = nextRun.split("/");
+        var d = new Date(dateSplit[2],dateSplit[1]-1,dateSplit[0]);
+        this.props.addTask(type, group, description, d.getTime(), owner);
         this.close();
     }
     handleInputChange = (event, data) => {
@@ -33,13 +36,13 @@ export default class AddTask extends Component {
     }
 
     render() {
-        const {modalOpen, type, group, nextRun, owner} = this.state;
+        const {modalOpen, type, group, description, nextRun, owner} = this.state;
         const {taskTypes} = this.props;
         return (
             <Modal size='mini' open={modalOpen} onClose={this.close}>
                 <Header icon='dot circle' content='New Task' />
                 <Modal.Content>
-                    <Form>
+                    <Form size='small'>
                         <Form.Field>
                             <label>Task Group</label>
                             <input name='group' value={group} 
@@ -51,6 +54,12 @@ export default class AddTask extends Component {
                             name='type'
                             value={type}
                             fluid label='Task Type' options={taskTypes} placeholder='Task Type' />
+                        <Form.Field>
+                            <label>Description</label>
+                            <input name='description' value={description} 
+                                onChange={this.handleInputChange}
+                                placeholder='Description' />
+                        </Form.Field>    
                         <Form.Field>
                             <label>Due</label>
                             <input name='nextRun' value={nextRun} 
