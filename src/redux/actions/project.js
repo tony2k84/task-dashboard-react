@@ -61,3 +61,10 @@ export const selectProject = (token, projectId, projectName) => {
         });
     }
 }
+
+export const getProjectTasks = (token, projectId) => {
+    return dispatch => dispatch({
+        type: 'GET_PROJECT_TASKS',
+        payload: _getProjectTasks(token, projectId)
+    });
+}

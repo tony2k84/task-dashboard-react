@@ -2,7 +2,13 @@ import { combineReducers } from 'redux';
 import {
 	GET_PROJECT_TASKS_PENDING,
 	GET_PROJECT_TASKS_FULFILLED,
-	GET_PROJECT_TASKS_REJECTED
+	GET_PROJECT_TASKS_REJECTED,
+	ADD_TASK_PENDING,
+	ADD_TASK_FULFILLED,
+	ADD_TASK_REJECTED,
+	COMPLETE_TASK_PENDING,
+	COMPLETE_TASK_FULFILLED,
+	COMPLETE_TASK_REJECTED,
 } from '../actions/action-types';
 
 import countBy from 'lodash/countBy';
@@ -12,6 +18,8 @@ import { PURGE } from 'redux-persist';
 
 const initialMetaState = {
 	GET_TASKS_STATUS: 'DEFAULT',
+	ADD_TASK_STATUS: 'DEFAULT',
+	COMPLETE_TASK_STATUS: 'DEFAULT',
 }
 
 const initialDataState = {
@@ -20,7 +28,7 @@ const initialDataState = {
 	totalTasksCount: 0,
 	overDueTasksCount: 0,
 	upcomingTasksCount: 0,
-	tasksByTaskType: {},
+	tasksByTaskType: [],
 }
 
 function metaReducer(state = initialMetaState, action) {
@@ -32,6 +40,18 @@ function metaReducer(state = initialMetaState, action) {
 			return { ...state, GET_TASKS_STATUS: 'SUCCESS' }
 		case GET_PROJECT_TASKS_REJECTED:
 			return { ...state, GET_TASKS_STATUS: 'FAILED' }
+		case ADD_TASK_PENDING:
+			return { ...state, ADD_TASK_STATUS: 'PENDING' }
+		case ADD_TASK_FULFILLED:
+			return { ...state, ADD_TASK_STATUS: 'SUCCESS' }
+		case ADD_TASK_REJECTED:
+			return { ...state, ADD_TASK_STATUS: 'FAILED' }
+		case COMPLETE_TASK_PENDING:
+			return { ...state, COMPLETE_TASK_STATUS: 'PENDING' }
+		case COMPLETE_TASK_FULFILLED:
+			return { ...state, COMPLETE_TASK_STATUS: 'SUCCESS' }
+		case COMPLETE_TASK_REJECTED:
+			return { ...state, COMPLETE_TASK_STATUS: 'FAILED' }
 		case PURGE:
 			return initialMetaState;
 		default:
@@ -49,14 +69,15 @@ function dataReducer(state = initialDataState, action) {
 			const overDueTasksCount = overDueTasks.length;
 			const upcomingTasksCount = upcomingTasks.length;
 			const byTaskTypes = countBy(tasks, 'type');
-			return { ...state, 
-					overDueTasks,
-					upcomingTasks,
-					totalTasksCount,
-					overDueTasksCount,
-					upcomingTasksCount,
-					tasksByTaskType: toPairs(byTaskTypes),
-				}
+			return {
+				...state,
+				overDueTasks,
+				upcomingTasks,
+				totalTasksCount,
+				overDueTasksCount,
+				upcomingTasksCount,
+				tasksByTaskType: toPairs(byTaskTypes),
+			}
 		case PURGE:
 			return initialDataState;
 		default:

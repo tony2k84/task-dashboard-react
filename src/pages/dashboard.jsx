@@ -4,6 +4,7 @@ import { Button, Grid, Header, Icon, Label } from 'semantic-ui-react';
 //redux
 import { connect } from 'react-redux';
 import { addTask, completeTask } from '../redux/actions/task';
+import { getProjectTasks } from '../redux/actions/project';
 import AddTask from '../components/new-task';
 import CompleteTask from '../components/complete-task';
 
@@ -23,6 +24,13 @@ class Dashboard extends Component {
 
     componentDidMount() {
 
+    }
+    componentWillReceiveProps(nextProps) {
+        if ((this.props.COMPLETE_TASK_STATUS !== 'SUCCESS' && nextProps.COMPLETE_TASK_STATUS === 'SUCCESS') ||
+            (this.props.ADD_TASK_STATUS !== 'SUCCESS' && nextProps.ADD_TASK_STATUS === 'SUCCESS')) {
+            const { projectId } = this.props.selectedProject;
+            this.props.getProjectTasks(this.props.token, projectId);
+        }
     }
     toDateFormat1 = (timestamp) => {
         var d = new Date(timestamp);
@@ -115,7 +123,7 @@ class Dashboard extends Component {
                     </Header>
                     <span style={{ textAlign: 'right', fontSize: 12 }} className={"color-default"}>
                         {
-                            days === 1 ? "TOMORROW" : days + " DAYS TO AGO"
+                            days <= 1 ? "TOMORROW" : this.toDateFormat1(item.nextRun)
                         }
                     </span>
 
@@ -123,9 +131,6 @@ class Dashboard extends Component {
             )
         }
         )
-    }
-    updateUpcomingTasks = (e, { value }) => {
-        this.setState({ activeUpcomingFilter: value })
     }
 
     saveTask = (type, group, description, nextRun, owner) => {
@@ -163,14 +168,14 @@ class Dashboard extends Component {
                 </Grid.Column>
                 <Grid.Column width={4}>
                     <Header as="h4">&nbsp;<Header.Subheader>&nbsp;</Header.Subheader></Header>
-                    <div className={"content-col"} style={{padding: 15}}>
+                    <div className={"content-col"} style={{ padding: 15 }}>
                         <div className={"row space-between align-center"}>
                             <Header style={{ margin: 0 }} as="h3">{selectedProject.projectName}</Header>
                             <Button
                                 onClick={() => this.addTask.current.open()}
                                 basic className={"default"} compact>New Task</Button>
                         </div>
-                        
+
                         <Header as="h4">Task Summary</Header>
                         {this.renderTaskSummary()}
 
@@ -191,6 +196,9 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        ADD_TASK_STATUS: state.task.meta.ADD_TASK_STATUS,
+        COMPLETE_TASK_STATUS: state.task.meta.COMPLETE_TASK_STATUS,
+        GET_TASKS_STATUS: state.task.meta.GET_TASKS_STATUS,
         token: state.user.data.token,
         selectedProject: state.project.data.selectedProject,
         taskTypes: state.taskType.data.taskTypes,
@@ -205,7 +213,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
     addTask,
-    completeTask
+    completeTask,
+    getProjectTasks
 }
 
 //export default Dashboard;
