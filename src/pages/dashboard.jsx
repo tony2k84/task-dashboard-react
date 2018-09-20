@@ -150,7 +150,7 @@ class Dashboard extends Component {
                 <Grid.Column width={6} style={{ padding: 5 }}>
                     <Header as="h4" style={{ marginBottom: 2, color: '#FF0000' }}>
                         Overdue Tasks
-                        <Header.Subheader>{overDueTasksCount} Tasks</Header.Subheader>
+                        <Header.Subheader><b>{overDueTasksCount}</b> Tasks</Header.Subheader>
                     </Header>
                     <div className={"content-col"}>
                         {this.renderDueTasks()}
@@ -159,7 +159,7 @@ class Dashboard extends Component {
                 <Grid.Column width={6} style={{ padding: 5 }}>
                     <Header as="h4" style={{ marginBottom: 2, color: '#004EFF' }}>
                         Upcoming Tasks
-                        <Header.Subheader>{upcomingTasksCount} Tasks</Header.Subheader>
+                        <Header.Subheader><b>{upcomingTasksCount}</b> Tasks</Header.Subheader>
                     </Header>
                     <div className={"content-col"}>
                         {this.renderUpcomingTasks()}
