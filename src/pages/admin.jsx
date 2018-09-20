@@ -108,7 +108,7 @@ class Admin extends Component {
             return (
                 <div key={index} className={"row space-between padding-vertical"}>
                     <div className="row align-center">
-                        <Icon name="bookmark" className={"color-default"}/>
+                        <Icon name="cube" className={"color-default"}/>
                         <div style={{ paddingLeft: 5 }}>{item.type}</div>
                     </div>
                     <span style={{ fontSize: 12 }}>
@@ -133,7 +133,7 @@ class Admin extends Component {
         return (
 
             <Grid className={"content"} columns={3}>
-                <Grid.Column>
+                <Grid.Column style={{padding: 5}}>
                     <div className={"row space-between align-center"} style={{ paddingBottom: 10 }}>
                         <Header as="h3" style={{ margin: 0 }}>
                             Projects
@@ -148,7 +148,7 @@ class Admin extends Component {
                         {this.renderProjects()}
                     </div>
                 </Grid.Column>
-                <Grid.Column>
+                <Grid.Column style={{padding: 5}}>
                     <div className={"row space-between align-center"} style={{ paddingBottom: 10 }}>
                         <Header as="h3" style={{ margin: 0 }}>
                             {!selectedProject?'SELECT A PROJECT':selectedProject.name}
@@ -165,7 +165,7 @@ class Admin extends Component {
                         {selectedProject?this.renderProjectMembers():null}
                     </div>
                 </Grid.Column>
-                <Grid.Column>
+                <Grid.Column style={{padding: 5}}>
                     <div className={"row space-between align-center"} style={{ paddingBottom: 10 }}>
                         <Header as="h3" style={{ margin: 0 }}>
                             Task Type

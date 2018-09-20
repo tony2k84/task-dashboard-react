@@ -6,6 +6,7 @@ import { Segment, Form, Input, Button } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { login } from '../redux/actions/user';
 import { getTaskTypes } from '../redux/actions/task-type';
+import Loading from '../components/loading';
 
 class Login extends Component {
     constructor(props) {
@@ -13,10 +14,12 @@ class Login extends Component {
         this.state = {
             email: '',
             password: '',
+            loading: false,
         }
     }
     componentWillReceiveProps(nextProps) {
         if (this.props.LOGIN_STAUTS !== 'SUCCESS' && nextProps.LOGIN_STATUS === 'SUCCESS') {
+            this.setState({loading: false});
             this.props.getTaskTypes(nextProps.token);
             this.props.history.push('/home');
         }
@@ -31,12 +34,13 @@ class Login extends Component {
         });
     }
     handleSubmit = (event) => {
+        this.setState({loading: true});
         event.preventDefault();
         const { email, password } = this.state;
         this.props.login(email, password);
     }
     render() {
-        const { email, password } = this.state;
+        const { email, password, loading } = this.state;
         return (
             <div style={{ height: '100%', backgroundSize: 'cover', backgroundImage: `url(${background})` }}>
                 <div className={"col align-center justify-center"} style={{ height: '100%', backgroundColor: 'rgba(50, 50, 50, 0.8)' }}>
@@ -59,6 +63,7 @@ class Login extends Component {
                         Dont have an account yet?
                     </div>
                 </div>
+                <Loading loading={loading}/>
             </div>
         );
     }

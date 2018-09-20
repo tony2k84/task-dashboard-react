@@ -4,12 +4,14 @@ import { Route } from 'react-router-dom';
 import Dashboard from './dashboard';
 import Admin from './admin';
 import SwitchProject from '../components/switch-project';
+import Loading from '../components/loading';
 
 //redux
 import { connect } from 'react-redux';
 import { logout } from '../redux/actions/user';
 import { selectProject } from '../redux/actions/project';
-import { getTaskTypes } from '../redux/actions/task-type';
+
+import { isSuccessNow, isFailNow } from '../utils/string-utils';
 
 class Home extends Component {
     constructor(props) {
@@ -31,6 +33,7 @@ class Home extends Component {
                 { key: 'log-out', text: 'LOGOUT', value: 'LOGOUT' },
             ],
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            loading: false,
 
         }
         this.switchProj = React.createRef();
@@ -41,12 +44,13 @@ class Home extends Component {
         this.updateProject(members[0]);
     }
 
-    componentWillReceiveProps(nextProps){
-        if(this.props.LOGOUT_STATUS !== 'SUCCESS' && nextProps.LOGOUT_STATUS === 'SUCCESS'){
+    componentWillReceiveProps(nextProps) {
+        if (isSuccessNow(this.props.LOGOUT_STATUS, nextProps.LOGOUT_STATUS)
+            || isFailNow(this.props.LOGOUT_STATUS, nextProps.LOGOUT_STATUS)) {
+            this.setState({ loading: false })
             this.props.history.replace('/');
-        }
-        if(this.props.LOGOUT_STATUS !== 'FAILED' && nextProps.LOGOUT_STATUS === 'FAILED'){
-            this.props.history.replace('/');
+        } else if (isSuccessNow(this.props.GET_TASKS_STATUS, nextProps.GET_TASKS_STATUS)) {
+            this.setState({ loading: false })
         }
     }
 
@@ -73,7 +77,7 @@ class Home extends Component {
     updateProject = (project) => {
         const { token } = this.props;
         const { projectId, name } = project;
-        this.setState({ selectedProject: project });
+        this.setState({ selectedProject: project, loading: true });
         this.props.selectProject(token, projectId, name);
     }
 
@@ -110,14 +114,16 @@ class Home extends Component {
                 <Route exact path="/home" component={Dashboard} />
                 <Route exact path="/home/admin" component={Admin} />
 
-                <div className={"row space-between padding-horizontal padding-vertical"}>
-                    <span style={{ color: '#939090' }}>{this.toDateFormat1(Date.now())}</span>
-                    <span style={{ color: '#939090' }}>All right reserved</span>
+                <div className={"row space-between padding-horizontal padding-vertical color-default"} style={{fontSize: 12}}>
+                    <span>{this.toDateFormat1(Date.now())}</span>
+                    <span>All right reserved</span>
                 </div>
 
                 <SwitchProject ref={this.switchProj}
                     projects={this.props.members}
                     selectProject={this.updateProject} />
+
+                <Loading loading={this.state.loading} />
             </div>
         );
     }
@@ -126,6 +132,7 @@ class Home extends Component {
 const mapStateToProps = (state) => {
     return {
         LOGOUT_STATUS: state.user.meta.LOGOUT_STATUS,
+        GET_TASKS_STATUS: state.task.meta.GET_TASKS_STATUS,
         token: state.user.data.token,
         name: state.user.data.userDetails.name,
         members: state.user.data.userDetails.members,
@@ -135,7 +142,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
     selectProject,
-    getTaskTypes,
     logout
 }
 

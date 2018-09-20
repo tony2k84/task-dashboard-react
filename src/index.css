@@ -24,7 +24,7 @@
 }
 
 .content-col{
-    height: calc(100% - 50px);
+    height: calc(100% - 40px);
     background-color: white;
     padding: 10px;
 }
@@ -68,13 +68,12 @@
 }
 
 .padding-vertical{
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-bottom: 3px;
 }
 
 .padding-horizontal{
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .ui.basic.button.default{
@@ -114,4 +113,9 @@
 
 .ui.selection.dropdown .menu>.item{
     font-size: 12px;
+}
+
+.ui.statistic>.label, .ui.statistics .statistic>.label{
+    color: #AAAAAA;
+    text-transform: none;
 }

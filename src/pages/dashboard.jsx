@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Grid, Header, Icon, Label } from 'semantic-ui-react';
+import { Button, Grid, Header, Icon, Statistic } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
@@ -7,6 +7,8 @@ import { addTask, completeTask } from '../redux/actions/task';
 import { getProjectTasks } from '../redux/actions/project';
 import AddTask from '../components/new-task';
 import CompleteTask from '../components/complete-task';
+import Loading from '../components/loading';
+import { isSuccessNow } from '../utils/string-utils';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -17,6 +19,7 @@ class Dashboard extends Component {
             upcoming: 96,
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             activeUpcomingFilter: "1",
+            loading: false,
         }
         this.addTask = React.createRef();
         this.completeTask = React.createRef();
@@ -26,10 +29,13 @@ class Dashboard extends Component {
 
     }
     componentWillReceiveProps(nextProps) {
-        if ((this.props.COMPLETE_TASK_STATUS !== 'SUCCESS' && nextProps.COMPLETE_TASK_STATUS === 'SUCCESS') ||
-            (this.props.ADD_TASK_STATUS !== 'SUCCESS' && nextProps.ADD_TASK_STATUS === 'SUCCESS')) {
+        if (isSuccessNow(this.props.COMPLETE_TASK_STATUS, nextProps.COMPLETE_TASK_STATUS) ||
+            isSuccessNow(this.props.ADD_TASK_STATUS, nextProps.ADD_TASK_STATUS)) {
             const { projectId } = this.props.selectedProject;
             this.props.getProjectTasks(this.props.token, projectId);
+        }
+        else if (isSuccessNow(this.props.GET_TASKS_STATUS, nextProps.GET_TASKS_STATUS)) {
+            this.setState({ loading: false });
         }
     }
     toDateFormat1 = (timestamp) => {
@@ -42,34 +48,25 @@ class Dashboard extends Component {
     }
     getDaysBetween = (from, to) => {
         var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-        return Math.round(Math.abs((to - from) / (oneDay)));
+        return Math.abs((to - from) / (oneDay));
     }
     renderTaskSummary = () => {
         const { totalTasksCount, overDueTasksCount, upcomingTasksCount } = this.props;
         return (
-            <React.Fragment>
-                <div className={"row space-between color-default padding-vertical"}>
-                    <div className={"row"}>
-                        <Icon className={"color-default"} name='dot circle' />
-                        <span>Tasks</span>
-                    </div>
-                    <span>{totalTasksCount}</span>
-                </div>
-                <div className={"row space-between color-default padding-vertical"}>
-                    <div className={"row"}>
-                        <Icon className={"color-red"} name='dot circle' />
-                        <span>Over due</span>
-                    </div>
-                    <span>{overDueTasksCount}</span>
-                </div>
-                <div className={"row space-between color-default padding-vertical"}>
-                    <div className={"row"}>
-                        <Icon className={"color-blue"} name='dot circle' />
-                        <span>Upcoming</span>
-                    </div>
-                    <span>{upcomingTasksCount}</span>
-                </div>
-            </React.Fragment>
+            <Statistic.Group size='mini' widths={3}>
+                <Statistic>
+                    <Statistic.Value>{totalTasksCount}</Statistic.Value>
+                    <Statistic.Label>Total</Statistic.Label>
+                </Statistic>
+                <Statistic>
+                    <Statistic.Value>{overDueTasksCount}</Statistic.Value>
+                    <Statistic.Label>Due</Statistic.Label>
+                </Statistic>
+                <Statistic>
+                    <Statistic.Value>{upcomingTasksCount}</Statistic.Value>
+                    <Statistic.Label>Upcoming</Statistic.Label>
+                </Statistic>
+            </Statistic.Group>
         )
     }
     renderTaskTypes = () => {
@@ -78,10 +75,10 @@ class Dashboard extends Component {
         return tasksByTaskType.map((item, index) =>
             <div key={index} className={"row space-between color-default padding-vertical"}>
                 <div className={"row"}>
-                    <Icon className={"color-default"} name='bookmark' />
-                    <span>{item[0]}</span>
+                    <Icon className={"color-default"} size='large' name='cube' />
+                    <span style={{paddingLeft: 5}}>{item[0]}</span>
                 </div>
-                <span>{item[1]}</span>
+                <span style={{paddingRight: 10}}>{item[1]}</span>
             </div>
         )
     }
@@ -135,12 +132,14 @@ class Dashboard extends Component {
 
     saveTask = (type, group, description, nextRun, owner) => {
         const { token, selectedProject } = this.props;
+        this.setState({ loading: true });
         this.props.addTask(token, selectedProject.projectId, type, group, description, nextRun, owner);
     }
 
     closeTask = (taskId, lastRun, nextRun) => {
         const { token, completeTask } = this.props;
         const { projectId } = this.props.selectedProject;
+        this.setState({ loading: true });
         completeTask(token, projectId, taskId, lastRun, nextRun);
     }
 
@@ -148,8 +147,8 @@ class Dashboard extends Component {
         const { selectedProject, overDueTasksCount, upcomingTasksCount } = this.props;
         return (
             <Grid className={"content"} columns={3}>
-                <Grid.Column width={6}>
-                    <Header as="h4" style={{ color: '#FF0000' }}>
+                <Grid.Column width={6} style={{ padding: 5 }}>
+                    <Header as="h4" style={{ marginBottom: 2, color: '#FF0000' }}>
                         Overdue Tasks
                         <Header.Subheader>{overDueTasksCount} Tasks</Header.Subheader>
                     </Header>
@@ -157,8 +156,8 @@ class Dashboard extends Component {
                         {this.renderDueTasks()}
                     </div>
                 </Grid.Column>
-                <Grid.Column width={6}>
-                    <Header as="h4" style={{ color: '#004EFF' }}>
+                <Grid.Column width={6} style={{ padding: 5 }}>
+                    <Header as="h4" style={{ marginBottom: 2, color: '#004EFF' }}>
                         Upcoming Tasks
                         <Header.Subheader>{upcomingTasksCount} Tasks</Header.Subheader>
                     </Header>
@@ -166,8 +165,8 @@ class Dashboard extends Component {
                         {this.renderUpcomingTasks()}
                     </div>
                 </Grid.Column>
-                <Grid.Column width={4}>
-                    <Header as="h4">&nbsp;<Header.Subheader>&nbsp;</Header.Subheader></Header>
+                <Grid.Column width={4} style={{ padding: 5 }}>
+                    <Header as="h4" style={{ marginBottom: 2 }}>&nbsp;<Header.Subheader>&nbsp;</Header.Subheader></Header>
                     <div className={"content-col"} style={{ padding: 15 }}>
                         <div className={"row space-between align-center"}>
                             <Header style={{ margin: 0 }} as="h3">{selectedProject.projectName}</Header>
@@ -188,6 +187,8 @@ class Dashboard extends Component {
 
                     <CompleteTask ref={this.completeTask}
                         closeTask={this.closeTask} />
+                    <Loading loading={this.state.loading} />
+
                 </Grid.Column>
             </Grid>
         );
