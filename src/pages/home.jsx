@@ -21,11 +21,10 @@ class Home extends Component {
                 {
                     key: 'user',
                     text: (
-                        <span>
+                        <span className={"color-default"}>
                             Signed in as <strong>{props.name}</strong>
                         </span>
                     ),
-                    disabled: true,
                 },
                 { key: 'admin', text: 'ADMIN', value: 'ADMIN' },
                 { key: 'log-out', text: 'LOGOUT', value: 'LOGOUT' },
@@ -94,9 +93,11 @@ class Home extends Component {
                             {selectedProject.projectName}
                         </Label>
                         <Dropdown 
+                            pointing='top left'
+                            direction='left'
                             onChange={this.handleMenuOptions} 
                             style={{ marginLeft: 10, marginRight: 10 }} 
-                            trigger={<span><Icon name='user outline' />Hello, {this.props.name}</span>} 
+                            trigger={<span>Hello, {this.props.name}</span>} 
                             options={profileOptions} />
                     </div>
                 </div>
