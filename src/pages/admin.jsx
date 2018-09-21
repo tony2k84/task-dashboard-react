@@ -67,18 +67,15 @@ class Admin extends Component {
         return projects.map((item, index) => {
             return (
                 <div key={index} style={{ cursor: 'pointer' }}
-                    className={"row space-between padding-vertical"}
+                    className={"row space-between padding-vertical padding-horizontal"}
                     onClick={() => this.setState({ selectedProject: item })}>
-                    <div className="row align-center">
-                        <Icon name='bullseye' size='large' className={(selectedProject && selectedProject.name === item.name) ? "color-blue" : "color-default"} />
-                        <div style={{ paddingLeft: 5 }}>
-                            <div>{item.name}</div>
-                            <div style={{ fontSize: 13, color: '#939090' }}>{item.members.length} Members</div>
-                        </div>
+                    <div className="row align-center padding-horizontal padding-vertical">
+                        <Header as='h4'>
+                            {item.name}
+                            <Header.Subheader>{item.members.length} Members</Header.Subheader>
+                        </Header>
                     </div>
-                    <span style={{ fontSize: 12 }}>
-                        <Button basic className={"default"} compact>DELETE</Button>
-                    </span>
+                    <Button basic className={"round"}>DELETE</Button>
                 </div>
             )
         })
@@ -87,17 +84,15 @@ class Admin extends Component {
         const { selectedProject } = this.state;
         return selectedProject.members.map((item, index) => {
             return (
-                <div key={index} className={"row space-between padding-vertical"}>
+                <div key={index} className={"row space-between padding-vertical padding-horizontal"}>
                     <div className="row align-center">
                         <Icon className={"color-default"} size='large' name="user outline" />
-                        <div style={{ paddingLeft: 5 }}>
-                            <div>{item.name}</div>
-                            <div style={{ fontSize: 13, color: '#939090' }}>{item.email}</div>
-                        </div>
+                        <Header as='h4' style={{margin: 0, marginLeft: 10}}>
+                            {item.name}
+                            <Header.Subheader>{item.email}</Header.Subheader>
+                        </Header>
                     </div>
-                    <span style={{ fontSize: 12 }}>
-                        <Button basic className={"default"} compact>DELETE</Button>
-                    </span>
+                    <Button basic className={"round"}>DELETE</Button>
                 </div>
             )
         })
@@ -106,14 +101,9 @@ class Admin extends Component {
         const { taskTypes } = this.props;
         return taskTypes.map((item, index) => {
             return (
-                <div key={index} className={"row space-between padding-vertical"}>
-                    <div className="row align-center">
-                        <Icon className={"color-default"} size='large' name='cube' />
-                        <div style={{ paddingLeft: 5 }}>{item.type}</div>
-                    </div>
-                    <span style={{ fontSize: 12 }}>
-                        <Button basic className={"default"} compact>DELETE</Button>
-                    </span>
+                <div key={index} className={"row space-between padding-vertical padding-horizontal"}>
+                    <Header as='h4' color='grey' style={{ margin: 0 }}>{item.type}</Header>
+                    <Button basic className={"round"}>DELETE</Button>
                 </div>
             )
         })
@@ -144,16 +134,16 @@ class Admin extends Component {
                             action={{ content: 'Add', onClick: this.addProject }}
                             placeholder='Project Name' />
                     </div>
-                    <div className={"content-col-less"}>
+                    <div className={"content-col-less-2"}>
                         {this.renderProjects()}
                     </div>
                 </Grid.Column>
                 <Grid.Column style={{ padding: 5 }}>
                     <div className={"row space-between align-center"} style={{ paddingBottom: 10 }}>
                         <Header as="h4" style={{ margin: 0 }}>
-                            {!selectedProject ? 'SELECT A PROJECT' : selectedProject.name}
+                            {!selectedProject ? 'Select a Project' : selectedProject.name}
                             <Header.Subheader>
-                                {selectedProject ? `${selectedProject.members.length} Members` : 'SELECT A PROJECT'}
+                                {selectedProject ? `${selectedProject.members.length} Members` : 'Select a Project'}
                             </Header.Subheader>
                         </Header>
                         {selectedProject ? <Input onChange={this.handleInputChange} name='email'
@@ -161,7 +151,7 @@ class Admin extends Component {
                             action={{ content: 'Add', onClick: this.addMember }}
                             placeholder='Email Address' /> : null}
                     </div>
-                    <div className={"content-col-less"}>
+                    <div className={"content-col-less-2"}>
                         {selectedProject ? this.renderProjectMembers() : null}
                     </div>
                 </Grid.Column>
@@ -176,7 +166,7 @@ class Admin extends Component {
                             action={{ content: 'Add', onClick: this.addTaskType }}
                             placeholder='Task Type' />
                     </div>
-                    <div className={"content-col-less"}>
+                    <div className={"content-col-less-2"}>
                         {this.renderTaskTypes()}
                     </div>
                 </Grid.Column>

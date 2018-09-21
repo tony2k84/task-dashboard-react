@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dropdown, Header, Icon, Label } from 'semantic-ui-react';
+import { Dropdown, Header, Label } from 'semantic-ui-react';
 import { Route } from 'react-router-dom';
 import Dashboard from './dashboard';
 import Admin from './admin';
@@ -84,11 +84,13 @@ class Home extends Component {
         const { selectedProject } = this.props;
         return (
             <div className={"main-container"}>
-                <div className="nav">
-                    <Header as="h2" style={{ cursor: 'pointer', margin: 0 }}
-                        onClick={() => this.props.history.push('/home')}>Task Dashboard</Header>
+                <div className={"nav row space-between align-center"}>
+                    <Header as="h2" color='blue' style={{ cursor: 'pointer', margin: 0 }}
+                        onClick={() => this.props.history.push('/home')}>Task Dashboard
+                        <Header.Subheader>{this.toDateFormat1(Date.now())}</Header.Subheader>
+                    </Header>
                     <div className={"row align-center padding-horizontal"}>
-                        <Label as='a' size='large'
+                        <Label as='a' size='large' className={"round"}
                             onClick={() => this.switchProj.current.open()}>
                             {selectedProject.projectName}
                         </Label>
@@ -104,11 +106,6 @@ class Home extends Component {
 
                 <Route exact path="/home" component={Dashboard} />
                 <Route exact path="/home/admin" component={Admin} />
-
-                <div className={"row space-between padding-horizontal padding-vertical color-default"} style={{fontSize: 12}}>
-                    <span>{this.toDateFormat1(Date.now())}</span>
-                    <span>All right reserved</span>
-                </div>
 
                 <SwitchProject ref={this.switchProj}
                     projects={this.props.members}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Grid, Header, Icon, Statistic, Label, Input } from 'semantic-ui-react';
+import { Button, Grid, Header, Statistic, Label, Input, Breadcrumb } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
@@ -60,7 +60,7 @@ class Dashboard extends Component {
                     <Statistic.Label>Due</Statistic.Label>
                 </Statistic>
                 <Statistic>
-                    <Statistic.Value>{taskCount-taskDueCount}</Statistic.Value>
+                    <Statistic.Value>{taskCount - taskDueCount}</Statistic.Value>
                     <Statistic.Label>Upcoming</Statistic.Label>
                 </Statistic>
             </Statistic.Group>
@@ -70,12 +70,9 @@ class Dashboard extends Component {
 
         const { tasksByTaskType } = this.props;
         return tasksByTaskType.map((item, index) =>
-            <div key={index} className={"row space-between color-default padding-vertical-more"}>
-                <div className={"row"}>
-                    <Icon className={"color-default"} size='large' name='cube' />
-                    <span style={{ paddingLeft: 5 }}>{item[0]}</span>
-                </div>
-                <span style={{ paddingRight: 10 }}>{item[1]}</span>
+            <div key={index} className={"row space-between align-center padding-vertical"}>
+                <Header as='h4' color='grey' style={{ margin: 0 }}>{item[0]}</Header>
+                <Label className={"round"} size='large' color='blue'>{item[1]}</Label>
             </div>
         )
     }
@@ -83,33 +80,37 @@ class Dashboard extends Component {
         const days = this.getDaysFromToday(timestamp);
         return (
             (Date.now() >= timestamp) ?
-                <div className={"color-red"}>
-                    {days <=2 ? "YESTERDAY" : this.toDateFormat1(timestamp)}
-                </div> :
-                <div className={"color-default"}>
-                    {days<=1?"TOMORROW":this.toDateFormat1(timestamp)}
-                </div>
+                <Header style={{ margin: 0 }} sub color='red'>
+                    {days <= 2 ? "YESTERDAY" : this.toDateFormat1(timestamp)}
+                </Header> :
+                <Header style={{ margin: 0 }} sub color='grey'>
+                    {days <= 1 ? "TOMORROW" : this.toDateFormat1(timestamp)}
+                </Header>
         )
     }
     renderTasks = () => {
         const { tasks } = this.state;
         return tasks.map((item, index) => {
             return (
-                <Grid.Row key={index} style={{ cursor: 'pointer', paddingBottom: 0 }}
+                <Grid.Row key={index} style={{ cursor: 'pointer', borderBottom: '1px solid #F2F2F2' }}
                     onClick={() => console.log(this.completeTask.current.open(item))}>
                     <Grid.Column width={12}>
                         <Header as='h4'>
                             {item.description}
                             <Header.Subheader>
-                                <Label.Group size='small'><Label>{item.group}</Label><Label>{item.type}</Label></Label.Group>
+                                <Breadcrumb size='small'>
+                                    <Breadcrumb.Section>{item.group}</Breadcrumb.Section>
+                                    <Breadcrumb.Divider icon='right angle' />
+                                    <Breadcrumb.Section>{item.type}</Breadcrumb.Section>
+                                </Breadcrumb>
                             </Header.Subheader>
                         </Header>
                     </Grid.Column>
-                    <Grid.Column width={4} textAlign='right' className={"color-default"} style={{ fontSize: 13 }}>
+                    <Grid.Column width={4} textAlign='right' style={{ fontSize: 13 }}>
                         {
                             this.renderDue(item.nextRun)
                         }
-                        <div>@{item.owner}</div>
+                        <Header style={{ margin: 0, paddingTop: 5 }} sub color='grey'>@{item.owner}</Header>
                     </Grid.Column>
                 </Grid.Row>
             )
@@ -147,22 +148,23 @@ class Dashboard extends Component {
         return (
             <Grid className={"content"} columns={3}>
                 <Grid.Column width={10} style={{ padding: 5 }}>
-                    <div className={"content-col"} style={{ padding: 15 }}>
-                        <div className={"row space-between align-center"}>
-                            <Header style={{ margin: 0 }} as="h3">Tasks
+                    <div style={{backgroundColor: '#ffffff', padding: 10, marginBottom: 5}} 
+                        className={"row space-between align-center"}>
+                        
+                        <Header style={{ margin: 0 }} as="h3">Tasks
                             <Header.Subheader>{taskCount} Tasks</Header.Subheader>
-                            </Header>
-                            <div className={"row"}>
-                                <div style={{ padding: 5 }} />
-                                <Input icon='search' placeholder='Group Name' 
-                                    name='group' onChange={this.filterByGroup} />
-                                <div style={{ padding: 5 }} />
-                                <Input icon='search' placeholder='Task Type' 
-                                    name='taskType' onChange={this.filterByType} />
-
-                            </div>
+                        </Header>
+                        <div className={"row"}>
+                            <div style={{ padding: 5 }} />
+                            <Input icon='search' placeholder='Group Name'
+                                name='group' onChange={this.filterByGroup} />
+                            <div style={{ padding: 5 }} />
+                            <Input icon='search' placeholder='Task Type'
+                                name='taskType' onChange={this.filterByType} />
                         </div>
-                        <Grid style={{ padding: 0, paddingTop: 20 }}>
+                    </div>
+                    <div className={"content-col-less"} style={{ padding: 15 }}>
+                        <Grid style={{ padding: 0 }}>
                             {this.renderTasks()}
                         </Grid>
                     </div>
@@ -173,13 +175,13 @@ class Dashboard extends Component {
                             <Header style={{ margin: 0 }} as="h3">{selectedProject.projectName}</Header>
                             <Button
                                 onClick={() => this.addTask.current.open()}
-                                basic className={"default"} compact>New Task</Button>
+                                basic className={"round"} compact>New Task</Button>
                         </div>
 
                         <Header as="h4">Task Summary</Header>
                         {this.renderTaskSummary()}
-                        
-                        <div style={{paddingTop: 20}}/>
+
+                        <div style={{ paddingTop: 20 }} />
 
                         <Header as="h4">Task Types</Header>
                         {this.renderTaskTypes()}
