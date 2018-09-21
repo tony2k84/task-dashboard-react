@@ -25,11 +25,13 @@ export default class CompleteTask extends Component {
         if (lastRun) {
             dateSplit = lastRun.split("/");
             d = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0]);
+            d.setHours(23, 59, 59, 999);
             lastRunTS = d.getTime();
         }
         if (nextRun) {
             dateSplit = nextRun.split("/");
             d = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0]);
+            d.setHours(23, 59, 59, 999);
             nextRunTS = d.getTime();
         }
         this.props.closeTask(_id, lastRunTS, nextRunTS);

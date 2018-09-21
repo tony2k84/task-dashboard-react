@@ -27,6 +27,7 @@ export default class AddTask extends Component {
         const { type, group, description, nextRun, owner } = this.state;
         var dateSplit = nextRun.split("/");
         var d = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0]);
+        d.setHours(23, 59, 59, 999);
         this.props.addTask(type, group, description, d.getTime(), owner);
         this.close();
     }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dropdown, Header, Input, Icon, Label } from 'semantic-ui-react';
+import { Dropdown, Header, Icon, Label } from 'semantic-ui-react';
 import { Route } from 'react-router-dom';
 import Dashboard from './dashboard';
 import Admin from './admin';
@@ -17,8 +17,6 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            group: '',
-            taskType: '',
             profileOptions: [
                 {
                     key: 'user',
@@ -81,17 +79,9 @@ class Home extends Component {
         this.props.selectProject(token, projectId, name);
     }
 
-    handleInputChange = (event) => {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-
-        this.setState({
-            [name]: value
-        });
-    }
+    
     render() {
-        const { group, profileOptions, taskType } = this.state;
+        const { profileOptions } = this.state;
         const { selectedProject } = this.props;
         return (
             <div className={"main-container"}>
@@ -103,11 +93,11 @@ class Home extends Component {
                             onClick={() => this.switchProj.current.open()}>
                             {selectedProject.projectName}
                         </Label>
-                        <div style={{ padding: 5 }} />
-                        <Input icon='search' placeholder='Group Name' name='group' value={group} onChange={this.handleInputChange} />
-                        <div style={{ padding: 5 }} />
-                        <Input icon='search' placeholder='Task Type' name='taskType' value={taskType} onChange={this.handleInputChange} />
-                        <Dropdown onChange={this.handleMenuOptions} style={{ marginLeft: 10 }} trigger={<span><Icon name='user outline' />Hello, {this.props.name}</span>} options={profileOptions} />
+                        <Dropdown 
+                            onChange={this.handleMenuOptions} 
+                            style={{ marginLeft: 10, marginRight: 10 }} 
+                            trigger={<span><Icon name='user outline' />Hello, {this.props.name}</span>} 
+                            options={profileOptions} />
                     </div>
                 </div>
 

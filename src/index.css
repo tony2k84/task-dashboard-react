@@ -24,7 +24,13 @@
 }
 
 .content-col{
-    height: calc(100% - 40px);
+    height: 100%;
+    background-color: white;
+    padding: 10px;
+}
+
+.content-col-less{
+    height: calc(100% - 50px);
     background-color: white;
     padding: 10px;
 }
@@ -69,6 +75,11 @@
 
 .padding-vertical{
     padding-bottom: 3px;
+}
+
+.padding-vertical-more{
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .padding-horizontal{
@@ -117,5 +128,9 @@
 
 .ui.statistic>.label, .ui.statistics .statistic>.label{
     color: #AAAAAA;
-    text-transform: none;
+}
+
+.ui.labels>.ui.label{
+    margin-left: 0px;
+    border-radius: 5px;
 }

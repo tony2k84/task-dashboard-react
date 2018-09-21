@@ -23,11 +23,9 @@ const initialMetaState = {
 }
 
 const initialDataState = {
-	overDueTasks: [],
-	upcomingTasks: [],
-	totalTasksCount: 0,
-	overDueTasksCount: 0,
-	upcomingTasksCount: 0,
+	tasks: [],
+	taskCount: 0,
+	taskDueCount: 0,
 	tasksByTaskType: [],
 }
 
@@ -63,19 +61,13 @@ function dataReducer(state = initialDataState, action) {
 	switch (action.type) {
 		case GET_PROJECT_TASKS_FULFILLED:
 			const tasks = action.payload.data.tasks;
-			const totalTasksCount = tasks.length;
-			const overDueTasks = tasks.filter(item => item.nextRun < Date.now());
-			const upcomingTasks = tasks.filter(item => item.nextRun > Date.now());
-			const overDueTasksCount = overDueTasks.length;
-			const upcomingTasksCount = upcomingTasks.length;
+			const taskCount = tasks.length;
 			const byTaskTypes = countBy(tasks, 'type');
 			return {
 				...state,
-				overDueTasks,
-				upcomingTasks,
-				totalTasksCount,
-				overDueTasksCount,
-				upcomingTasksCount,
+				taskCount,
+				taskDueCount: tasks.filter(item => item.nextRun < Date.now()).length,
+				tasks,
 				tasksByTaskType: toPairs(byTaskTypes),
 			}
 		case PURGE:
