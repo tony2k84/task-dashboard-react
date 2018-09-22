@@ -163,7 +163,7 @@ class Dashboard extends Component {
     }
     render() {
         const { selectedProject, taskCount, } = this.props;
-        const { group, taskType } = this.state;
+        const { taskType } = this.state;
         return (
             <Grid className={"content"} columns={3}>
                 <Grid.Column width={10} style={{ padding: 5 }}>
