@@ -28,10 +28,8 @@ export default class SwitchProject extends Component {
                             <div>{item.name}</div>
                         </div>
                     </div>
-                    <span style={{ fontSize: 12 }}>
-                        <Button onClick={()=>this.selectProject(item)} 
-                            basic className={"selected"}>SELECT</Button>
-                    </span>
+                    <Button onClick={() => this.selectProject(item)}
+                        color='blue' circular>SELECT</Button>
                 </div>
             )
         })
@@ -40,7 +38,7 @@ export default class SwitchProject extends Component {
         const { modalOpen } = this.state;
         return (
             <Modal size='mini' open={modalOpen} onClose={this.close}>
-                <Modal.Content style={{paddingBottom: 20}}>
+                <Modal.Content style={{ paddingBottom: 20 }}>
                     {this.renderProjects()}
                 </Modal.Content>
             </Modal>

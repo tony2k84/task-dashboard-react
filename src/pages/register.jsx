@@ -59,7 +59,7 @@ class Register extends Component {
                                         onClick={()=>this.props.history.replace("/")}
                                         basic className={"selected"} type='submit'>LOGIN</Button>
                                 </div>:
-                                <Form onSubmit={this.handleSubmit}>
+                                <Form onSubmit={this.handleSubmit} autocomplete="off">
                                     <Form.Field>
                                         <label>Name</label>
                                         <Input name='name' onChange={this.handleInputChange} value={name} icon='user ouline' iconPosition='left' placeholder='John Doe' />
@@ -75,7 +75,7 @@ class Register extends Component {
 
                                     <Button floated='right' style={{ marginTop: 10 }}
                                         onClick={this.handleSubmit}
-                                        basic className={"selected"} type='submit'>REGISTER</Button>
+                                        color='blue' className={"round"} type='submit'>REGISTER</Button>
                                 </Form>
                         }
 

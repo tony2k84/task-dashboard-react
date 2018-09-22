@@ -64,6 +64,7 @@ class Home extends Component {
                 this.props.history.push('/home/admin');
                 break;
             case 'LOGOUT':
+                this.setState({loading: true});
                 this.props.logout(this.props.token);
                 break;
             default:
@@ -87,7 +88,7 @@ class Home extends Component {
                 <div className={"nav row space-between align-center"}>
                     <Header as="h2" color='blue' style={{ cursor: 'pointer', margin: 0 }}
                         onClick={() => this.props.history.push('/home')}>Task Dashboard
-                        <Header.Subheader>{this.toDateFormat1(Date.now())}</Header.Subheader>
+                        <Header.Subheader style={{fontSize: 13}}>{this.toDateFormat1(Date.now())}</Header.Subheader>
                     </Header>
                     <div className={"row align-center padding-horizontal"}>
                         <Label as='a' size='large' className={"round"}

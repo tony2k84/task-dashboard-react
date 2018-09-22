@@ -12,8 +12,7 @@
 
 .main-container .content{
     flex: 1;
-    padding: 15px;
-    padding-bottom: 5px;
+    padding: 5px;
     margin: 0px!important;
 }
 
@@ -23,7 +22,7 @@
 }
 
 .content-col-less{
-    height: calc(100% - 64px);
+    height: calc(100% - 73px);
     background-color: white;
     padding: 10px;
 }
@@ -66,7 +65,7 @@
     padding-right: 5px;
 }
 
-.ui.label.round, .ui.button.round{
+.ui.label.round{
     border-radius: 100px;
 }
 
@@ -92,4 +91,9 @@
 
 .ui.labels>.ui.label{
     margin-left: 0px;
+}
+
+.xlink {
+    color: #AAAAAA;
+    cursor: pointer;
 }

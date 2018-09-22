@@ -39,6 +39,11 @@ class Admin extends Component {
             this.props.getProjects(this.props.token);
         }
 
+        if(this.props.GET_PROJECTS_STATUS !== 'SUCCESS' && nextProps.GET_PROJECTS_STATUS === 'SUCCESS'){
+            // selecting 1st project
+            this.setState({ selectedProject: nextProps.projects[0]});
+        }
+
     }
 
     addTaskType = (e) => {
@@ -65,17 +70,23 @@ class Admin extends Component {
         const { projects } = this.props;
         const { selectedProject } = this.state;
         return projects.map((item, index) => {
+            const isCurrentSelected = selectedProject && selectedProject.projectId === item.projectId;
             return (
                 <div key={index} style={{ cursor: 'pointer' }}
-                    className={"row space-between padding-vertical padding-horizontal"}
+                    className={"row space-between align-center padding-vertical padding-horizontal"}
                     onClick={() => this.setState({ selectedProject: item })}>
                     <div className="row align-center padding-horizontal padding-vertical">
-                        <Header as='h4'>
-                            {item.name}
-                            <Header.Subheader>{item.members.length} Members</Header.Subheader>
-                        </Header>
+                        <div className="row align-center">
+                            <Icon color={isCurrentSelected?"blue":"grey"} size='large' 
+                                name={isCurrentSelected?"clipboard":"clipboard outline"} />
+                            <Header as='h4' color='grey' style={{ margin: 0, marginLeft: 10 }}>
+                                {item.name}
+                                <Header.Subheader>{item.members.length} Members</Header.Subheader>
+                            </Header>
+                        </div>
+
                     </div>
-                    <Button basic className={"round"}>DELETE</Button>
+                    <Button color='blue' compact circular>DELETE</Button>
                 </div>
             )
         })
@@ -84,15 +95,15 @@ class Admin extends Component {
         const { selectedProject } = this.state;
         return selectedProject.members.map((item, index) => {
             return (
-                <div key={index} className={"row space-between padding-vertical padding-horizontal"}>
+                <div key={index} className={"row space-between align-center padding-vertical padding-horizontal"}>
                     <div className="row align-center">
-                        <Icon className={"color-default"} size='large' name="user outline" />
-                        <Header as='h4' style={{margin: 0, marginLeft: 10}}>
+                        <Icon color='grey' size='large' name="user outline" />
+                        <Header as='h4' color='grey' style={{ margin: 0, marginLeft: 10 }}>
                             {item.name}
                             <Header.Subheader>{item.email}</Header.Subheader>
                         </Header>
                     </div>
-                    <Button basic className={"round"}>DELETE</Button>
+                    <Button color='blue' compact circular>DELETE</Button>
                 </div>
             )
         })
@@ -101,9 +112,12 @@ class Admin extends Component {
         const { taskTypes } = this.props;
         return taskTypes.map((item, index) => {
             return (
-                <div key={index} className={"row space-between padding-vertical padding-horizontal"}>
-                    <Header as='h4' color='grey' style={{ margin: 0 }}>{item.type}</Header>
-                    <Button basic className={"round"}>DELETE</Button>
+                <div key={index} className={"row space-between align-center padding-vertical padding-horizontal"}>
+                    <div className="row align-center">
+                        <Icon color='grey' size='large' name="sticky note outline" />
+                        <Header as='h4' color='grey' style={{ margin: 0, marginLeft: 10 }}>{item.type}</Header>
+                    </div>
+                    <Button color='blue' compact circular>DELETE</Button>
                 </div>
             )
         })
@@ -146,10 +160,10 @@ class Admin extends Component {
                                 {selectedProject ? `${selectedProject.members.length} Members` : 'Select a Project'}
                             </Header.Subheader>
                         </Header>
-                        {selectedProject ? <Input onChange={this.handleInputChange} name='email'
+                        <Input onChange={this.handleInputChange} name='email'
                             value={email}
                             action={{ content: 'Add', onClick: this.addMember }}
-                            placeholder='Email Address' /> : null}
+                            placeholder='Email Address' />
                     </div>
                     <div className={"content-col-less-2"}>
                         {selectedProject ? this.renderProjectMembers() : null}

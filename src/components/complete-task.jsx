@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Button, Header, Form } from 'semantic-ui-react';
+import { Modal, Button, Header, Form, Breadcrumb } from 'semantic-ui-react';
 
 export default class CompleteTask extends Component {
     constructor(props) {
@@ -59,21 +59,27 @@ export default class CompleteTask extends Component {
                 <Header icon='dot circle' content='Complete Task' />
                 <Modal.Content>
                     <Form size='small'>
-                            <Form.Field>
-                                <label>Task Group</label>
-                                <div className={"color-default"}>{group}</div>
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Task Type</label>
-                                <div className={"color-default"}>{type}</div>
-                            </Form.Field>
+                        <Form.Field>
+                            <label>Task Group</label>
+                            <div>{group}</div>
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Task Type</label>
+                            <div>{type}</div>
+                        </Form.Field>
                         <Form.Field>
                             <label>Description</label>
-                            <div className={"color-default"}>{description}</div>
+                            <div>{description}</div>
                         </Form.Field>
                         <Form.Field>
                             <label>Owner</label>
-                            <div className={"color-default"}>{owner}</div>
+                            {owner &&
+                                <Breadcrumb size='small'>
+                                    <Breadcrumb.Section>{owner.name}</Breadcrumb.Section>
+                                    <Breadcrumb.Divider icon='right angle' />
+                                    <Breadcrumb.Section>{owner.email}</Breadcrumb.Section>
+                                </Breadcrumb>
+                            }
                         </Form.Field>
                         <Form.Field>
                             <label>Completion Date</label>
@@ -91,9 +97,10 @@ export default class CompleteTask extends Component {
                     </Form>
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button basic
+                    <Button
                         onClick={() => this.completeTask()}
-                        className={"selected"} content='COMPLETE' />
+                        color='blue'
+                        circular content='COMPLETE' />
                 </Modal.Actions>
             </Modal>
         )

@@ -45,7 +45,7 @@ class Login extends Component {
             <div style={{ height: '100%', backgroundSize: 'cover', backgroundImage: `url(${background})` }}>
                 <div className={"col align-center justify-center"} style={{ height: '100%', backgroundColor: 'rgba(50, 50, 50, 0.8)' }}>
                     <Segment style={{ width: 350, borderRadius: 0, padding: 20 }}>
-                        <Form onSubmit={this.handleSubmit}>
+                        <Form onSubmit={this.handleSubmit} autocomplete="off">
                             <Form.Field>
                                 <label>Email Address</label>
                                 <Input name='email' onChange={this.handleInputChange} value={email} icon='mail' iconPosition='left' placeholder='john.doe@company.com' />
@@ -56,7 +56,7 @@ class Login extends Component {
                             </Form.Field>
                             <Button floated='right' style={{ marginTop: 20 }}
                                 onClick={this.handleSubmit}
-                                basic className={"selected"} type='submit'>LOGIN</Button>
+                                color='blue' className={"round"} type='submit'>LOGIN</Button>
                         </Form>
                     </Segment>
                     <div className={"xlink"} onClick={() => this.props.history.push('/register')}>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Grid, Header, Statistic, Label, Input, Breadcrumb } from 'semantic-ui-react';
+import { Button, Grid, Header, Statistic, Label, Input, Breadcrumb, Icon, Checkbox, Form } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
@@ -20,6 +20,7 @@ class Dashboard extends Component {
             tasks: [],
             group: '',
             taskType: '',
+            mine: false,
         }
         this.addTask = React.createRef();
         this.completeTask = React.createRef();
@@ -71,8 +72,14 @@ class Dashboard extends Component {
         const { tasksByTaskType } = this.props;
         return tasksByTaskType.map((item, index) =>
             <div key={index} className={"row space-between align-center padding-vertical"}>
-                <Header as='h4' color='grey' style={{ margin: 0 }}>{item[0]}</Header>
-                <Label className={"round"} size='large' color='blue'>{item[1]}</Label>
+                <div className="row align-center">
+                    <Icon color='grey' size='large' name="sticky note outline" />
+                    <Header as='h4' color='grey' style={{ margin: 0, marginLeft: 10 }}>{item[0]}</Header>
+                </div>
+                <Label as='a' circular size='large' color='blue'
+                    onClick={()=>this.setState({taskType: item[0]}, ()=> this._filterByType())}>
+                    {item[1]}
+                </Label>
             </div>
         )
     }
@@ -93,7 +100,7 @@ class Dashboard extends Component {
         return tasks.map((item, index) => {
             return (
                 <Grid.Row key={index} style={{ cursor: 'pointer', borderBottom: '1px solid #F2F2F2' }}
-                    onClick={() => console.log(this.completeTask.current.open(item))}>
+                    onClick={() => this.completeTask.current.open(item)}>
                     <Grid.Column width={12}>
                         <Header as='h4'>
                             {item.description}
@@ -110,7 +117,7 @@ class Dashboard extends Component {
                         {
                             this.renderDue(item.nextRun)
                         }
-                        <Header style={{ margin: 0, paddingTop: 5 }} sub color='grey'>@{item.owner}</Header>
+                        <Header style={{ margin: 0, paddingTop: 5 }} sub color='grey'>@{item.owner.name}</Header>
                     </Grid.Column>
                 </Grid.Row>
             )
@@ -135,32 +142,56 @@ class Dashboard extends Component {
             tasks: tasks.filter(item => item.group.toLowerCase().includes(group.toLowerCase()))
         });
     }
-    filterByType = (event) => {
-        const target = event.target;
-        const taskType = target.value;
+    _filterByType(){
         const { tasks } = this.props;
+        const { taskType } = this.state;
         this.setState({
             tasks: tasks.filter(item => item.type.toLowerCase().includes(taskType.toLowerCase()))
         });
     }
+    filterByType = (event) => {
+        this.setState({taskType: event.target.value}, ()=> this._filterByType());
+    }
+    toggleMine = () => {
+        const { mine } = this.state;
+        const { userEmail, tasks } = this.props;
+        this.setState({ mine: !mine });
+        this.setState({
+            mine: !mine,
+            tasks: mine ? tasks : tasks.filter(item => item.owner.email.toLowerCase() === userEmail.toLowerCase())
+        });
+    }
     render() {
         const { selectedProject, taskCount, } = this.props;
+        const { group, taskType } = this.state;
         return (
             <Grid className={"content"} columns={3}>
                 <Grid.Column width={10} style={{ padding: 5 }}>
-                    <div style={{backgroundColor: '#ffffff', padding: 10, marginBottom: 5}} 
+                    <div style={{ backgroundColor: '#ffffff', padding: 10, marginBottom: 5 }}
                         className={"row space-between align-center"}>
-                        
+
                         <Header style={{ margin: 0 }} as="h3">Tasks
                             <Header.Subheader>{taskCount} Tasks</Header.Subheader>
                         </Header>
-                        <div className={"row"}>
-                            <div style={{ padding: 5 }} />
-                            <Input icon='search' placeholder='Group Name'
-                                name='group' onChange={this.filterByGroup} />
-                            <div style={{ padding: 5 }} />
-                            <Input icon='search' placeholder='Task Type'
-                                name='taskType' onChange={this.filterByType} />
+                        <div className={"row align-center"}>
+                            <Form size='small' autoComplete="off">
+                                <Form.Group className={"row align-center"}>
+                                    <Form.Field>
+                                        <Checkbox label={<label style={{fontSize: 12}}>My Tasks</label>} onChange={() => this.toggleMine()} />
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <Input icon='search' placeholder='Group Name'
+                                            name='group' onChange={this.filterByGroup} />
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <Input icon='search' placeholder='Task Type'
+                                            value={taskType}
+                                            name='taskType' 
+                                            onChange={this.filterByType} />
+                                    </Form.Field>
+                                </Form.Group>
+
+                            </Form>
                         </div>
                     </div>
                     <div className={"content-col-less"} style={{ padding: 15 }}>
@@ -175,13 +206,11 @@ class Dashboard extends Component {
                             <Header style={{ margin: 0 }} as="h3">{selectedProject.projectName}</Header>
                             <Button
                                 onClick={() => this.addTask.current.open()}
-                                basic className={"round"} compact>New Task</Button>
+                                color='blue' circular compact>New Task</Button>
                         </div>
 
                         <Header as="h4">Task Summary</Header>
                         {this.renderTaskSummary()}
-
-                        <div style={{ paddingTop: 20 }} />
 
                         <Header as="h4">Task Types</Header>
                         {this.renderTaskTypes()}
@@ -205,6 +234,7 @@ const mapStateToProps = (state) => {
         ADD_TASK_STATUS: state.task.meta.ADD_TASK_STATUS,
         COMPLETE_TASK_STATUS: state.task.meta.COMPLETE_TASK_STATUS,
         GET_TASKS_STATUS: state.task.meta.GET_TASKS_STATUS,
+        userEmail: state.user.data.userDetails.email,
         token: state.user.data.token,
         selectedProject: state.project.data.selectedProject,
         taskTypes: state.taskType.data.taskTypes,

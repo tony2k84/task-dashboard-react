@@ -82,9 +82,9 @@ export default class AddTask extends Component {
                     </Form>
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button basic
+                    <Button color='blue'
                         onClick={() => this.saveTask()}
-                        className={"selected"} content='SAVE' />
+                        circular content='SAVE' />
                 </Modal.Actions>
             </Modal>
         )
