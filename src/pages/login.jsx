@@ -56,6 +56,7 @@ class Login extends Component {
                             </Form.Field>
                             <Button floated='right' style={{ marginTop: 20 }}
                                 onClick={this.handleSubmit}
+                                circular
                                 color='blue' className={"round"} type='submit'>LOGIN</Button>
                         </Form>
                     </Segment>

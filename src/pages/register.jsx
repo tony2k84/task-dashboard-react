@@ -75,6 +75,7 @@ class Register extends Component {
 
                                     <Button floated='right' style={{ marginTop: 10 }}
                                         onClick={this.handleSubmit}
+                                        circular
                                         color='blue' className={"round"} type='submit'>REGISTER</Button>
                                 </Form>
                         }
