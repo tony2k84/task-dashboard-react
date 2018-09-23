@@ -56,8 +56,9 @@ class Register extends Component {
                                         <b>Note:</b> You only have access to a personal project.
                                     </div>
                                     <Button floated='right' style={{ marginTop: 23 }}
+                                        circular
                                         onClick={()=>this.props.history.replace("/")}
-                                        basic className={"selected"} type='submit'>LOGIN</Button>
+                                        color='blue' type='submit'>LOGIN</Button>
                                 </div>:
                                 <Form onSubmit={this.handleSubmit} autocomplete="off">
                                     <Form.Field>
@@ -76,7 +77,7 @@ class Register extends Component {
                                     <Button floated='right' style={{ marginTop: 10 }}
                                         onClick={this.handleSubmit}
                                         circular
-                                        color='blue' className={"round"} type='submit'>REGISTER</Button>
+                                        color='blue' type='submit'>REGISTER</Button>
                                 </Form>
                         }
 
