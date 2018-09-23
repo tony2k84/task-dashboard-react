@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Grid, Header, Input, Icon } from 'semantic-ui-react';
+import Loading from '../components/loading';
 
 //redux
 import { connect } from 'react-redux';
@@ -15,11 +16,13 @@ class Admin extends Component {
             projectName: '',
             selectedProject: null,
             email: '',
+            loading: false,
         }
     }
 
     componentDidMount() {
         const { token, getProjects, getTaskTypes } = this.props;
+        this.setState({loading: true})
         getProjects(token);
         getTaskTypes(token);
     }
@@ -41,7 +44,7 @@ class Admin extends Component {
 
         if(this.props.GET_PROJECTS_STATUS !== 'SUCCESS' && nextProps.GET_PROJECTS_STATUS === 'SUCCESS'){
             // selecting 1st project
-            this.setState({ selectedProject: nextProps.projects[0]});
+            this.setState({ loading: false, selectedProject: nextProps.projects[0]});
         }
 
     }
@@ -183,6 +186,7 @@ class Admin extends Component {
                     <div className={"content-col-less-2"}>
                         {this.renderTaskTypes()}
                     </div>
+                    <Loading loading={this.state.loading} />
                 </Grid.Column>
             </Grid>
         );

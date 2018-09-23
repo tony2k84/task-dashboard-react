@@ -17,7 +17,7 @@ class Dashboard extends Component {
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             loading: false,
             taskCount: 0,
-            tasks: [],
+            tasks: props.tasks,
             group: '',
             taskType: '',
             mine: false,

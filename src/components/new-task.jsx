@@ -48,7 +48,7 @@ export default class AddTask extends Component {
             <Modal size='mini' open={modalOpen} onClose={this.close}>
                 <Header icon='dot circle' content='New Task' />
                 <Modal.Content>
-                    <Form size='small'>
+                    <Form size='small' autoComplete='off'>
                         <Form.Field>
                             <label>Task Group</label>
                             <input name='group' value={group}
