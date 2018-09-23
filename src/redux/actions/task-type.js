@@ -1,5 +1,6 @@
 import axios from 'axios';
-const TASK_TYPE_URL = 'http://localhost:9001/v1/task-type';
+const HOST_NAME = process.env.REACT_APP_API_URI;
+const TASK_TYPE_URL = `${HOST_NAME}/task-type`;
 
 var _getTaskTypes = (token) => {
     return axios.get(TASK_TYPE_URL, {headers: {'Authorization': token}});

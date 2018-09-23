@@ -26,6 +26,5 @@ const provider = (
 		</PersistGate>
 	</Provider>
 );
-
 ReactDOM.render(provider, document.getElementById('root'));
 registerServiceWorker();

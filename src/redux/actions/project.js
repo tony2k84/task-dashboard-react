@@ -1,7 +1,8 @@
 import axios from 'axios';
-const PROJECT_URL = 'http://localhost:9001/v1/project';
-const PROJECT_MEMBER_URL = 'http://localhost:9001/v1/project/add-member';
-const GET_TASK_URL = 'http://localhost:9001/v1/task';
+const HOST_NAME = process.env.REACT_APP_API_URI;
+const PROJECT_URL = `${HOST_NAME}/project`;
+const PROJECT_MEMBER_URL = `${HOST_NAME}/project/add-member`;
+const GET_TASK_URL = `${HOST_NAME}/task`;
 
 var _getProjects = (token) => {
     return axios.get(PROJECT_URL, {headers: {'Authorization': token}});

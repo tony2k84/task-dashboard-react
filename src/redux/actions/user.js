@@ -1,9 +1,10 @@
 import axios from 'axios';
 import {persistor} from '../store';
 
-const LOGIN_URL = 'http://localhost:9001/v1/user/login';
-const REGISTER_URL = 'http://localhost:9001/v1/user/register';
-const LOGOUT_URL = 'http://localhost:9001/v1/user/logout'
+const HOST_NAME = process.env.REACT_APP_API_URI;
+const LOGIN_URL = `${HOST_NAME}/user/login`;
+const REGISTER_URL = `${HOST_NAME}/user/register`;
+const LOGOUT_URL = `${HOST_NAME}/user/logout`;
 
 var _login = (email, password) => {
     return axios.post(LOGIN_URL, { email, password });

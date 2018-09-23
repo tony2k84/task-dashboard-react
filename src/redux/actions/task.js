@@ -1,7 +1,8 @@
 // report related actions
 import axios from 'axios';
-const ADD_TASK_URL = 'http://localhost:9001/v1/task/add';
-const COMPLETE_TASK_URL = 'http://localhost:9001/v1/task/complete';
+const HOST_NAME = process.env.REACT_APP_API_URI;
+const ADD_TASK_URL = `${HOST_NAME}/task/add`;
+const COMPLETE_TASK_URL = `${HOST_NAME}/task/complete`;
 
 var _addTask = (token, projectId, type, group, description, nextRun, owner) => {
     return axios.post(ADD_TASK_URL,
