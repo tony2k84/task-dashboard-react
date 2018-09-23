@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import background from '../assets/background.jpeg';
 import { Segment, Form, Input, Icon, Button, Header } from 'semantic-ui-react';
+import Loading from '../components/loading';
 
 //redux
 import { connect } from 'react-redux';
@@ -14,11 +15,13 @@ class Register extends Component {
             email: '',
             password: '',
             registered: false,
+            loading: false,
         }
     }
     componentWillReceiveProps(nextProps) {
-        if (this.props.REGISTER_STAUTS !== 'SUCCESS' && nextProps.REGISTER_STAUTS === 'SUCCESS') {
-            this.setState({ registered: true });
+        console.log(this.props.REGISTER_STATUS, nextProps.REGISTER_STATUS);
+        if (this.props.REGISTER_STATUS !== 'SUCCESS' && nextProps.REGISTER_STATUS === 'SUCCESS') {
+            this.setState({ loading: false, registered: true });
         }
     }
     handleInputChange = (event) => {
@@ -34,7 +37,7 @@ class Register extends Component {
         event.preventDefault();
         const { name, email, password } = this.state;
         this.props.register(name, email, password);
-        this.setState({registered: true})
+        this.setState({loading: true})
     }
     render() {
         const { name, email, password, registered } = this.state;
@@ -60,14 +63,14 @@ class Register extends Component {
                                         onClick={()=>this.props.history.replace("/")}
                                         color='blue' type='submit'>LOGIN</Button>
                                 </div>:
-                                <Form onSubmit={this.handleSubmit} autocomplete="off">
+                                <Form onSubmit={this.handleSubmit} autoComplete="off">
                                     <Form.Field>
                                         <label>Name</label>
-                                        <Input name='name' onChange={this.handleInputChange} value={name} icon='user ouline' iconPosition='left' placeholder='John Doe' />
+                                        <Input name='name' onChange={this.handleInputChange} value={name} icon='user outline' iconPosition='left' placeholder='John Doe' />
                                     </Form.Field>
                                     <Form.Field>
                                         <label>Email Address</label>
-                                        <Input name='email' onChange={this.handleInputChange} value={email} icon='mail' iconPosition='left' placeholder='john.doe@company.com' />
+                                        <Input name='email' onChange={this.handleInputChange} value={email} icon='envelope outline' iconPosition='left' placeholder='john.doe@company.com' />
                                     </Form.Field>
                                     <Form.Field>
                                         <label>Password</label>
@@ -86,6 +89,8 @@ class Register extends Component {
                         <Icon name='chevron left' />
                         Back to LOGIN
                     </div>
+                    <Loading loading={this.state.loading}/>
+
                 </div>
             </div>
         );
