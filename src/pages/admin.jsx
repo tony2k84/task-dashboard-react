@@ -21,18 +21,19 @@ class Admin extends Component {
     }
 
     componentDidMount() {
-        const { token, getProjects, getTaskTypes } = this.props;
+        const { token, getProjects } = this.props;
         this.setState({loading: true})
         getProjects(token);
-        getTaskTypes(token);
     }
 
     componentWillReceiveProps(nextProps) {
 
         if (this.props.ADD_TASK_TYPE_STATUS !== 'SUCCESS' && nextProps.ADD_TASK_TYPE_STATUS === 'SUCCESS') {
-            // get new task types
-            this.props.getTaskTypes(this.props.token);
+            // get task types
+            this.setState({taskType: ''})
+            this.props.getTaskTypes(this.props.token, this.state.selectedProject._id);
         }
+
         if (this.props.ADD_PROJECT_MEMBER_STATUS !== 'SUCCESS' && nextProps.ADD_PROJECT_MEMBER_STATUS === 'SUCCESS') {
             // update projects
             this.props.getProjects(this.props.token);
@@ -43,41 +44,49 @@ class Admin extends Component {
         }
 
         if(this.props.GET_PROJECTS_STATUS !== 'SUCCESS' && nextProps.GET_PROJECTS_STATUS === 'SUCCESS'){
-            // selecting 1st project
-            this.setState({ loading: false, selectedProject: nextProps.projects[0]});
+            this.setState({ loading: false});
+        }
+
+        if(this.props.GET_TASK_TYPE_STATUS !== 'SUCCESS' && nextProps.GET_TASK_TYPE_STATUS === 'SUCCESS'){
+            this.setState({ loading: false});
         }
 
     }
 
     addTaskType = (e) => {
-        const { taskType } = this.state;
+        const { taskType, selectedProject } = this.state;
         const { addTaskType, token } = this.props;
-        addTaskType(token, taskType);
-        this.setState({ taskType: '' })
+        this.setState({ loading: true})
+        addTaskType(token, selectedProject._id, taskType);
     }
     addProject = (e) => {
         const { projectName } = this.state;
         const { addProject, token } = this.props;
+        this.setState({ loading: true, selectedProject: null, projectName: '' })
         addProject(token, projectName);
-        this.setState({ projectName: '', selectedProject: null })
 
     }
     addMember = (e) => {
         const { selectedProject, email } = this.state;
         const { addMember, token } = this.props;
+        this.setState({ loading: true, selectedProject: null, email: '' });
         addMember(token, selectedProject._id, selectedProject.name, email);
-        this.setState({ projectName: '', selectedProject: null })
 
+    }
+    selectPrject = (project) => {
+        const {token, getTaskTypes} = this.props;
+        this.setState({ loading: true, selectedProject: project });
+        getTaskTypes(token, project._id);
     }
     renderProjects = () => {
         const { projects } = this.props;
         const { selectedProject } = this.state;
         return projects.map((item, index) => {
-            const isCurrentSelected = selectedProject && selectedProject.projectId === item.projectId;
+            const isCurrentSelected = selectedProject && selectedProject._id === item._id;
             return (
                 <div key={index} style={{ cursor: 'pointer' }}
                     className={"row space-between align-center padding-vertical padding-horizontal"}
-                    onClick={() => this.setState({ selectedProject: item })}>
+                    onClick={() => this.selectPrject(item) }>
                     <div className="row align-center padding-horizontal padding-vertical">
                         <div className="row align-center">
                             <Icon color={isCurrentSelected?"blue":"grey"} size='large' 
@@ -87,7 +96,6 @@ class Admin extends Component {
                                 <Header.Subheader>{item.members.length} Members</Header.Subheader>
                             </Header>
                         </div>
-
                     </div>
                     <Button color='blue' compact circular>DELETE</Button>
                 </div>
@@ -146,7 +154,7 @@ class Admin extends Component {
                             Projects
                             <Header.Subheader>{projects.length} Projects</Header.Subheader>
                         </Header>
-                        <Input onChange={this.handleInputChange} name='projectName'
+                        <Input autoComplete="off" onChange={this.handleInputChange} name='projectName'
                             value={projectName}
                             action={{ content: 'Add', onClick: this.addProject }}
                             placeholder='Project Name' />
@@ -158,13 +166,13 @@ class Admin extends Component {
                 <Grid.Column style={{ padding: 5 }}>
                     <div className={"row space-between align-center"} style={{ paddingBottom: 10 }}>
                         <Header as="h4" style={{ margin: 0 }}>
-                            {!selectedProject ? 'Select a Project' : selectedProject.name}
-                            <Header.Subheader>
-                                {selectedProject ? `${selectedProject.members.length} Members` : 'Select a Project'}
-                            </Header.Subheader>
+                            Project Members
+                            <Header.Subheader>{selectedProject?selectedProject.members.length:0} Members</Header.Subheader>
                         </Header>
                         <Input onChange={this.handleInputChange} name='email'
+                            autoComplete="off"
                             value={email}
+                            disabled={!selectedProject}
                             action={{ content: 'Add', onClick: this.addMember }}
                             placeholder='Email Address' />
                     </div>
@@ -175,11 +183,13 @@ class Admin extends Component {
                 <Grid.Column style={{ padding: 5 }}>
                     <div className={"row space-between align-center"} style={{ paddingBottom: 10 }}>
                         <Header as="h4" style={{ margin: 0 }}>
-                            Task Type
+                            Project Task Types
                             <Header.Subheader>{taskTypes.length} Task Types</Header.Subheader>
                         </Header>
                         <Input onChange={this.handleInputChange} name='taskType'
+                            autoComplete="off"
                             value={taskType}
+                            disabled={!selectedProject}
                             action={{ content: 'Add', onClick: this.addTaskType }}
                             placeholder='Task Type' />
                     </div>
@@ -197,7 +207,7 @@ class Admin extends Component {
 const mapStateToProps = (state) => {
     return {
         ADD_TASK_TYPE_STATUS: state.taskType.meta.ADD_TASK_TYPE_STATUS,
-        GET_TASK_TYPES_STATUS: state.taskType.meta.GET_TASK_TYPES_STATUS,
+        GET_TASK_TYPE_STATUS: state.taskType.meta.GET_TASK_TYPE_STATUS,
         ADD_PROJECT_STATUS: state.project.meta.ADD_PROJECT_STATUS,
         GET_PROJECTS_STATUS: state.project.meta.GET_PROJECTS_STATUS,
         ADD_PROJECT_MEMBER_STATUS: state.project.meta.ADD_PROJECT_MEMBER_STATUS,

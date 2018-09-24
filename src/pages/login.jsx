@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import background from '../assets/background.jpeg';
-import { Segment, Form, Button, Header } from 'semantic-ui-react';
+import { Segment, Form, Button } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
 import { login } from '../redux/actions/user';
-import { getTaskTypes } from '../redux/actions/task-type';
 import Loading from '../components/loading';
 
 import { isFailNow, isSuccessNow } from '../utils/string-utils';
@@ -25,7 +24,6 @@ class Login extends Component {
     componentWillReceiveProps(nextProps) {
         if (isSuccessNow(this.props.LOGIN_STAUTS, nextProps.LOGIN_STATUS)) {
             this.setState({ loading: false });
-            this.props.getTaskTypes(nextProps.token);
             this.props.history.push('/home');
         } else if (isFailNow(this.props.LOGIN_STAUTS, nextProps.LOGIN_STATUS)) {
             this.setState({ error: true, errorMessage: LOGIN_FAILED_MSG});
@@ -108,7 +106,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
     login,
-    getTaskTypes
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)
