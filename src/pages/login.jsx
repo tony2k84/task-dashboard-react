@@ -9,6 +9,7 @@ import { getTaskTypes } from '../redux/actions/task-type';
 import Loading from '../components/loading';
 
 import { isFailNow, isSuccessNow } from '../utils/string-utils';
+import { LOGIN_FAILED_MSG } from '../utils/constants';
 
 class Login extends Component {
     constructor(props) {
@@ -18,6 +19,7 @@ class Login extends Component {
             password: '',
             loading: false,
             error: false,
+            errorMessage: null,
         }
     }
     componentWillReceiveProps(nextProps) {
@@ -26,7 +28,7 @@ class Login extends Component {
             this.props.getTaskTypes(nextProps.token);
             this.props.history.push('/home');
         } else if (isFailNow(this.props.LOGIN_STAUTS, nextProps.LOGIN_STATUS)) {
-            this.setState({ loading: false, error: true });
+            this.setState({ error: true, errorMessage: LOGIN_FAILED_MSG});
         }
     }
     handleInputChange = (event) => {
@@ -53,7 +55,7 @@ class Login extends Component {
         this.props.login(email, password);
     }
     render() {
-        const { email, password, loading, error } = this.state;
+        const { email, password} = this.state;
         return (
             <div style={{ height: '100%', backgroundSize: 'cover', backgroundImage: `url(${background})` }}>
                 <div className={"col align-center justify-center"} style={{ height: '100%', backgroundColor: 'rgba(50, 50, 50, 0.8)' }}>
@@ -65,23 +67,19 @@ class Login extends Component {
                                 value={email}
                                 icon='mail' iconPosition='left'
                                 label='Email Address' placeholder='john.doe@company.com'
-                                error={error} />
+                                />
                             <Form.Input fluid
                                 onChange={this.handleInputChange}
                                 name='password'
                                 value={password}
                                 icon='lock' iconPosition='left'
                                 label='Password' placeholder='Password'
-                                error={error} />
-                            <div style={{marginTop: 20}} className={"row space-between align-center"}>
-                                <div style={{color: '#db2828'}}>
-                                    {error?"Forgot your email or password?":""}
-                                </div>
-                                <Button floated='right'
-                                    onClick={this.handleSubmit}
-                                    circular
-                                    color='blue' className={"round"} type='submit'>LOGIN</Button>
-                            </div>
+                                />
+
+                            <Button style={{ marginTop: 20 }} floated='right'
+                                onClick={this.handleSubmit}
+                                circular
+                                color='blue' className={"round"} type='submit'>LOGIN</Button>
                         </Form>
                     </Segment>
 
@@ -90,7 +88,11 @@ class Login extends Component {
                     </div>
 
                 </div>
-                <Loading loading={loading} />
+                <Loading 
+                    onClose={()=>this.state.error?this.setState({loading: false, error: false}):null}
+                    loading={this.state.loading} 
+                    error={this.state.error} 
+                    message={this.state.errorMessage} />
             </div>
         );
     }
