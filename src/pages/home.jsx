@@ -26,7 +26,7 @@ class Home extends Component {
                         </span>
                     ),
                 },
-                { key: 'admin', text: 'ADMIN', value: 'ADMIN' },
+                { key: 'admin', text: 'ADMIN', value: 'ADMIN', disabled: props.type==='member' },
                 { key: 'log-out', text: 'LOGOUT', value: 'LOGOUT' },
             ],
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -133,6 +133,7 @@ const mapStateToProps = (state) => {
         GET_TASKS_STATUS: state.task.meta.GET_TASKS_STATUS,
         token: state.user.data.token,
         name: state.user.data.userDetails.name,
+        type: state.user.data.userDetails.type,
         members: state.user.data.userDetails.members,
         selectedProject: state.project.data.selectedProject,
     }
