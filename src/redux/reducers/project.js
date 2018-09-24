@@ -9,12 +9,14 @@ import {
 	ADD_PROJECT_MEMBER_PENDING,
 	ADD_PROJECT_MEMBER_FULFILLED,
 	ADD_PROJECT_MEMBER_REJECTED,
+	SELECT_PROJECT_PENDING,
 	SELECT_PROJECT_FULFILLED,
 } from '../actions/action-types';
 
 import { PURGE } from 'redux-persist';
 
 const initialMetaState = {
+	SELECT_PROJECT_STATUS: 'DEFAULT',
 	GET_PROJECTS_STATUS: 'DEFAULT',
 	ADD_PROJECT_STATUS: 'DEFUALT',
 	ADD_PROJECT_MEMBER_STATUS: 'DEFAULT',
@@ -46,6 +48,10 @@ function metaReducer(state = initialMetaState, action) {
 			return { ...state, ADD_PROJECT_MEMBER_STATUS: 'SUCCESS' }
 		case ADD_PROJECT_MEMBER_REJECTED:
 			return { ...state, ADD_PROJECT_MEMBER_STATUS: 'FAILED' }
+		case SELECT_PROJECT_PENDING:
+			return {...state, SELECT_PROJECT_STATUS: 'PENDING'}
+		case SELECT_PROJECT_FULFILLED:
+			return {...state, SELECT_PROJECT_STATUS: 'SUCCESS'}
 		case PURGE:
 			return initialMetaState;
 		default:

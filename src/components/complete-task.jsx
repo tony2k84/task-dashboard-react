@@ -60,6 +60,10 @@ export default class CompleteTask extends Component {
                 <Modal.Content>
                     <Form size='small'>
                         <Form.Field>
+                            <label>Description</label>
+                            <div>{description}</div>
+                        </Form.Field>
+                        <Form.Field>
                             <label>Task Group</label>
                             <div>{group}</div>
                         </Form.Field>
@@ -67,10 +71,7 @@ export default class CompleteTask extends Component {
                             <label>Task Type</label>
                             <div>{type}</div>
                         </Form.Field>
-                        <Form.Field>
-                            <label>Description</label>
-                            <div>{description}</div>
-                        </Form.Field>
+
                         <Form.Field>
                             <label>Owner</label>
                             {owner &&

@@ -27,7 +27,7 @@ class Admin extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
+        
         if (this.props.ADD_TASK_TYPE_STATUS !== 'SUCCESS' && nextProps.ADD_TASK_TYPE_STATUS === 'SUCCESS') {
             // get task types
             this.setState({taskType: ''})

@@ -9,8 +9,8 @@ import Loading from '../components/loading';
 //redux
 import { connect } from 'react-redux';
 import { logout } from '../redux/actions/user';
-import { selectProject } from '../redux/actions/project';
-
+import { selectProject, getProjectTasks } from '../redux/actions/project';
+import { getTaskTypes } from '../redux/actions/task-type';
 import { isSuccessNow, isFailNow } from '../utils/string-utils';
 
 class Home extends Component {
@@ -31,14 +31,9 @@ class Home extends Component {
             ],
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             loading: false,
-
+            selectedProject: props.selectedProject,
         }
         this.switchProj = React.createRef();
-    }
-
-    componentDidMount() {
-        const { members } = this.props;
-        this.updateProject(members[0]);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -46,18 +41,25 @@ class Home extends Component {
             || isFailNow(this.props.LOGOUT_STATUS, nextProps.LOGOUT_STATUS)) {
             this.setState({ loading: false })
             this.props.history.replace('/');
-        } else if (isSuccessNow(this.props.GET_TASKS_STATUS, nextProps.GET_TASKS_STATUS)) {
+        } 
+        if(isSuccessNow(this.props.SELECT_PROJECT_STATUS, nextProps.SELECT_PROJECT_STATUS)){
+            // get project tasks
+            this.setState({selectedProject: nextProps.selectedProject});
+            this.props.getTaskTypes(this.props.token, nextProps.selectedProject.projectId);
+        }
+        if(isSuccessNow(this.props.GET_TASK_TYPE_STATUS, nextProps.GET_TASK_TYPE_STATUS)){
+            // get project tasks
+            this.props.getProjectTasks(this.props.token, nextProps.selectedProject.projectId);
+        }
+        if (isSuccessNow(this.props.GET_TASKS_STATUS, nextProps.GET_TASKS_STATUS)) {
             this.setState({ loading: false })
         }
     }
-
-
     toDateFormat1 = (timestamp) => {
         var d = new Date(timestamp);
         const { months } = this.state;
         return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
     }
-
     handleMenuOptions = (e, { value }) => {
         switch (value) {
             case 'ADMIN':
@@ -71,15 +73,20 @@ class Home extends Component {
                 break;
         }
     }
-
     updateProject = (project) => {
-        const { token } = this.props;
         const { projectId, name } = project;
         this.setState({ selectedProject: project, loading: true });
-        this.props.selectProject(token, projectId, name);
-    }
+        this.props.selectProject(projectId, name);
+    } 
 
-    
+    goHome = () => {
+        // update project
+        console.log(this.state.selectedProject);
+        if(this.state.selectedProject){
+            this.updateProject(this.state.selectedProject);
+        }
+        this.props.history.push('/home');
+    }
     render() {
         const { profileOptions } = this.state;
         const { selectedProject } = this.props;
@@ -87,13 +94,13 @@ class Home extends Component {
             <div className={"main-container"}>
                 <div className={"nav row space-between align-center"}>
                     <Header as="h2" color='blue' style={{ cursor: 'pointer', margin: 0 }}
-                        onClick={() => this.props.history.push('/home')}>Task Dashboard
+                        onClick={() => this.goHome() }>Task Dashboard
                         <Header.Subheader style={{fontSize: 13}}>{this.toDateFormat1(Date.now())}</Header.Subheader>
                     </Header>
                     <div className={"row align-center padding-horizontal"}>
                         <Label as='a' size='large' className={"round"}
                             onClick={() => this.switchProj.current.open()}>
-                            {selectedProject.projectName}
+                            {selectedProject.name?selectedProject.name:"SELECT PROJECT"}
                         </Label>
                         <Dropdown 
                             pointing='top left'
@@ -121,6 +128,8 @@ class Home extends Component {
 const mapStateToProps = (state) => {
     return {
         LOGOUT_STATUS: state.user.meta.LOGOUT_STATUS,
+        SELECT_PROJECT_STATUS: state.project.meta.SELECT_PROJECT_STATUS,
+        GET_TASK_TYPE_STATUS: state.taskType.meta.GET_TASK_TYPE_STATUS,
         GET_TASKS_STATUS: state.task.meta.GET_TASKS_STATUS,
         token: state.user.data.token,
         name: state.user.data.userDetails.name,
@@ -131,6 +140,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
     selectProject,
+    getTaskTypes,
+    getProjectTasks,
     logout
 }
 

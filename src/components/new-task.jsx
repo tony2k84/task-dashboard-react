@@ -51,22 +51,23 @@ export default class AddTask extends Component {
                 <Modal.Content>
                     <Form size='small' autoComplete='off'>
                         <Form.Field>
+                            <label>Description</label>
+                            <input name='description' value={description}
+                                onChange={this.handleInputChange}
+                                placeholder='Description' />
+                        </Form.Field>
+                        <Form.Field>
                             <label>Task Group</label>
                             <input name='group' value={group}
                                 onChange={this.handleInputChange}
                                 placeholder='Task Group' />
                         </Form.Field>
                         <Form.Select
+                            search selection
                             onChange={this.handleInputChange}
                             name='type'
                             value={type}
                             fluid label='Task Type' options={taskTypes} placeholder='Task Type' />
-                        <Form.Field>
-                            <label>Description</label>
-                            <input name='description' value={description}
-                                onChange={this.handleInputChange}
-                                placeholder='Description' />
-                        </Form.Field>
                         <Form.Field>
                             <label>Owner</label>
                             <input name='owner' value={owner}

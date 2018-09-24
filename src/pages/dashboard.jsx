@@ -4,7 +4,6 @@ import { Button, Grid, Header, Statistic, Label, Input, Breadcrumb, Icon, Checkb
 //redux
 import { connect } from 'react-redux';
 import { addTask, completeTask } from '../redux/actions/task';
-import { getProjectTasks } from '../redux/actions/project';
 import AddTask from '../components/new-task';
 import CompleteTask from '../components/complete-task';
 import Loading from '../components/loading';
@@ -24,16 +23,6 @@ class Dashboard extends Component {
         }
         this.addTask = React.createRef();
         this.completeTask = React.createRef();
-    }
-    componentWillReceiveProps(nextProps) {
-        if (isSuccessNow(this.props.COMPLETE_TASK_STATUS, nextProps.COMPLETE_TASK_STATUS) ||
-            isSuccessNow(this.props.ADD_TASK_STATUS, nextProps.ADD_TASK_STATUS)) {
-            const { projectId } = this.props.selectedProject;
-            this.props.getProjectTasks(this.props.token, projectId);
-        }
-        else if (isSuccessNow(this.props.GET_TASKS_STATUS, nextProps.GET_TASKS_STATUS)) {
-            this.setState({ loading: false, tasks: nextProps.tasks });
-        }
     }
     toDateFormat1 = (timestamp) => {
         var d = new Date(timestamp);
@@ -248,7 +237,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
     addTask,
     completeTask,
-    getProjectTasks
 }
 
 //export default Dashboard;
