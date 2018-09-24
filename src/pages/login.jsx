@@ -69,6 +69,7 @@ class Login extends Component {
                                 label='Email Address' placeholder='john.doe@company.com'
                                 />
                             <Form.Input fluid
+                                type='password'
                                 onChange={this.handleInputChange}
                                 name='password'
                                 value={password}
