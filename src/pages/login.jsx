@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import background from '../assets/background.jpeg';
-import { Segment, Form, Input, Button } from 'semantic-ui-react';
+import { Segment, Form, Button, Header } from 'semantic-ui-react';
 
 //redux
 import { connect } from 'react-redux';
 import { login } from '../redux/actions/user';
 import { getTaskTypes } from '../redux/actions/task-type';
 import Loading from '../components/loading';
+
+import { isFailNow, isSuccessNow } from '../utils/string-utils';
 
 class Login extends Component {
     constructor(props) {
@@ -15,56 +17,80 @@ class Login extends Component {
             email: '',
             password: '',
             loading: false,
+            error: false,
         }
     }
     componentWillReceiveProps(nextProps) {
-        if (this.props.LOGIN_STAUTS !== 'SUCCESS' && nextProps.LOGIN_STATUS === 'SUCCESS') {
-            this.setState({loading: false});
+        if (isSuccessNow(this.props.LOGIN_STAUTS, nextProps.LOGIN_STATUS)) {
+            this.setState({ loading: false });
             this.props.getTaskTypes(nextProps.token);
             this.props.history.push('/home');
+        } else if (isFailNow(this.props.LOGIN_STAUTS, nextProps.LOGIN_STATUS)) {
+            this.setState({ loading: false, error: true });
         }
     }
     handleInputChange = (event) => {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
+        const { error } = this.state;
+        if (error) {
+            this.setState({
+                [name]: value,
+                error: false,
+            });
+        } else {
+            this.setState({
+                [name]: value
+            });
+        }
 
-        this.setState({
-            [name]: value
-        });
     }
     handleSubmit = (event) => {
-        this.setState({loading: true});
+        this.setState({ loading: true });
         event.preventDefault();
         const { email, password } = this.state;
         this.props.login(email, password);
     }
     render() {
-        const { email, password, loading } = this.state;
+        const { email, password, loading, error } = this.state;
         return (
             <div style={{ height: '100%', backgroundSize: 'cover', backgroundImage: `url(${background})` }}>
                 <div className={"col align-center justify-center"} style={{ height: '100%', backgroundColor: 'rgba(50, 50, 50, 0.8)' }}>
                     <Segment style={{ width: 350, borderRadius: 0, padding: 20 }}>
                         <Form onSubmit={this.handleSubmit} autoComplete="off">
-                            <Form.Field>
-                                <label>Email Address</label>
-                                <Input name='email' onChange={this.handleInputChange} value={email} icon='mail' iconPosition='left' placeholder='john.doe@company.com' />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Password</label>
-                                <Input name='password' onChange={this.handleInputChange} value={password} type='password' icon='lock' iconPosition='left' placeholder='Password' />
-                            </Form.Field>
-                            <Button floated='right' style={{ marginTop: 20 }}
-                                onClick={this.handleSubmit}
-                                circular
-                                color='blue' className={"round"} type='submit'>LOGIN</Button>
+                            <Form.Input fluid
+                                onChange={this.handleInputChange}
+                                name='email'
+                                value={email}
+                                icon='mail' iconPosition='left'
+                                label='Email Address' placeholder='john.doe@company.com'
+                                error={error} />
+                            <Form.Input fluid
+                                onChange={this.handleInputChange}
+                                name='password'
+                                value={password}
+                                icon='lock' iconPosition='left'
+                                label='Password' placeholder='Password'
+                                error={error} />
+                            <div style={{marginTop: 20}} className={"row space-between align-center"}>
+                                <div style={{color: '#db2828'}}>
+                                    {error?"Forgot your email or password?":""}
+                                </div>
+                                <Button floated='right'
+                                    onClick={this.handleSubmit}
+                                    circular
+                                    color='blue' className={"round"} type='submit'>LOGIN</Button>
+                            </div>
                         </Form>
                     </Segment>
+
                     <div className={"xlink"} onClick={() => this.props.history.push('/register')}>
                         Dont have an account yet?
                     </div>
+
                 </div>
-                <Loading loading={loading}/>
+                <Loading loading={loading} />
             </div>
         );
     }

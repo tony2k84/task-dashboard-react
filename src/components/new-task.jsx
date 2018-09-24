@@ -10,7 +10,8 @@ export default class AddTask extends Component {
             group: '',
             description: '',
             nextRun: '',
-            owner: ''
+            owner: '',
+            error: false,
         }
     }
     open = () => this.setState({
@@ -78,7 +79,6 @@ export default class AddTask extends Component {
                                 onChange={this.handleInputChange}
                                 placeholder='DD/MM/YYYY' />
                         </Form.Field>
-
                     </Form>
                 </Modal.Content>
                 <Modal.Actions>
