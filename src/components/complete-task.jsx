@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Modal, Button, Header, Form, Breadcrumb } from 'semantic-ui-react';
+import { Modal, Button, Header, Form, Breadcrumb, Input, Icon } from 'semantic-ui-react';
+import { RectDatePicker } from 'rect-ui-calendar';
 
 export default class CompleteTask extends Component {
     constructor(props) {
@@ -8,7 +9,10 @@ export default class CompleteTask extends Component {
             modalOpen: false,
             nextRun: '',
             lastRun: this.toDateFormat1(Date.now()),
-            task: {}
+            task: {},
+            selected: '',
+            open: false,
+            openType: '',
         }
     }
     open = (task) => this.setState({
@@ -51,14 +55,32 @@ export default class CompleteTask extends Component {
         var d = new Date(timestamp);
         return d.getDate().toString().padStart(2, "0") + "/" + (d.getMonth() + 1).toString().padStart(2, "0") + "/" + d.getFullYear();
     }
+
+    onSelect = (selected) => {
+        const {openType} = this.state;
+        if(openType === 'lastRun')
+            this.setState({ open: false, lastRun: this.toDateFormat1(selected) });
+        else
+            this.setState({ open: false, nextRun: this.toDateFormat1(selected) });
+    }
+    openCalendar = (openType) => {
+        const { nextRun } = this.state;
+        var d = new Date();
+        var ds = nextRun.split("/");
+        d.setDate(ds[0]);
+        d.setMonth(ds[1] - 1);
+        d.setFullYear(ds[2]);
+        d.setHours(0, 0, 0);
+        this.setState({ selected: d, openType, open: true })
+    }
     render() {
-        const { modalOpen, nextRun, lastRun } = this.state;
+        const { modalOpen, nextRun, lastRun, open } = this.state;
         const { type, group, description, owner } = this.state.task;
         return (
             <Modal size='mini' open={modalOpen} onClose={this.close}>
                 <Header icon='dot circle' content='Complete Task' />
                 <Modal.Content>
-                    <Form size='small'>
+                    <Form size='small' autoComplete="off">
                         <Form.Field>
                             <label>Description</label>
                             <div>{description}</div>
@@ -84,16 +106,26 @@ export default class CompleteTask extends Component {
                         </Form.Field>
                         <Form.Field>
                             <label>Completion Date</label>
-                            <input name='lastRun' value={lastRun}
+                            <Input 
+                                icon={<Icon name='calendar outline' link onClick={()=>this.openCalendar('lastRun')} />}
+                                iconPosition='left'
+                                name='lastRun' value={lastRun}
                                 onChange={this.handleInputChange}
                                 placeholder='DD/MM/YYYY' />
                         </Form.Field>
                         <Form.Field>
                             <label>Next Due</label>
-                            <input name='nextRun' value={nextRun}
+                            <Input 
+                                icon={<Icon name='calendar outline' link onClick={()=>this.openCalendar('nextRun')} />}
+                                iconPosition='left'
+                                name='nextRun' value={nextRun}
                                 onChange={this.handleInputChange}
                                 placeholder='DD/MM/YYYY' />
                         </Form.Field>
+
+                        <RectDatePicker open={open}
+                            selected={this.state.selected}
+                            onSelect={this.onSelect} />
 
                     </Form>
                 </Modal.Content>

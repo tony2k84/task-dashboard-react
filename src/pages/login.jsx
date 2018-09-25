@@ -18,7 +18,7 @@ class Login extends Component {
             password: '',
             loading: false,
             error: false,
-            errorMessage: null,
+            errorMessage: null,            
         }
     }
     componentWillReceiveProps(nextProps) {
@@ -26,7 +26,7 @@ class Login extends Component {
             this.setState({ loading: false });
             this.props.history.push('/home');
         } else if (isFailNow(this.props.LOGIN_STAUTS, nextProps.LOGIN_STATUS)) {
-            this.setState({ error: true, errorMessage: LOGIN_FAILED_MSG});
+            this.setState({ error: true, errorMessage: LOGIN_FAILED_MSG });
         }
     }
     handleInputChange = (event) => {
@@ -53,27 +53,29 @@ class Login extends Component {
         this.props.login(email, password);
     }
     render() {
-        const { email, password} = this.state;
+        const { email, password } = this.state;
         return (
             <div style={{ height: '100%', backgroundSize: 'cover', backgroundImage: `url(${background})` }}>
                 <div className={"col align-center justify-center"} style={{ height: '100%', backgroundColor: 'rgba(50, 50, 50, 0.8)' }}>
                     <Segment style={{ width: 350, borderRadius: 0, padding: 20 }}>
                         <Form onSubmit={this.handleSubmit} autoComplete="off">
                             <Form.Input fluid
+                                className={"round"}
                                 onChange={this.handleInputChange}
                                 name='email'
                                 value={email}
                                 icon='mail' iconPosition='left'
                                 label='Email Address' placeholder='john.doe@company.com'
-                                />
+                            />
                             <Form.Input fluid
+                                className={"round"}
                                 type='password'
                                 onChange={this.handleInputChange}
                                 name='password'
                                 value={password}
                                 icon='lock' iconPosition='left'
                                 label='Password' placeholder='Password'
-                                />
+                            />
 
                             <Button style={{ marginTop: 20 }} floated='right'
                                 onClick={this.handleSubmit}
@@ -87,10 +89,10 @@ class Login extends Component {
                     </div>
 
                 </div>
-                <Loading 
-                    onClose={()=>this.state.error?this.setState({loading: false, error: false}):null}
-                    loading={this.state.loading} 
-                    error={this.state.error} 
+                <Loading
+                    onClose={() => this.state.error ? this.setState({ loading: false, error: false }) : null}
+                    loading={this.state.loading}
+                    error={this.state.error}
                     message={this.state.errorMessage} />
             </div>
         );

@@ -154,7 +154,7 @@ class Admin extends Component {
                             Projects
                             <Header.Subheader>{projects.length} Projects</Header.Subheader>
                         </Header>
-                        <Input autoComplete="off" onChange={this.handleInputChange} name='projectName'
+                        <Input className={"round"} autoComplete="off" onChange={this.handleInputChange} name='projectName'
                             value={projectName}
                             action={{ content: 'Add', onClick: this.addProject }}
                             placeholder='Project Name' />
@@ -169,7 +169,7 @@ class Admin extends Component {
                             Project Members
                             <Header.Subheader>{selectedProject?selectedProject.members.length:0} Members</Header.Subheader>
                         </Header>
-                        <Input onChange={this.handleInputChange} name='email'
+                        <Input className={"round"} onChange={this.handleInputChange} name='email'
                             autoComplete="off"
                             value={email}
                             disabled={!selectedProject}
@@ -186,7 +186,7 @@ class Admin extends Component {
                             Project Task Types
                             <Header.Subheader>{taskTypes.length} Task Types</Header.Subheader>
                         </Header>
-                        <Input onChange={this.handleInputChange} name='taskType'
+                        <Input className={"round"} onChange={this.handleInputChange} name='taskType'
                             autoComplete="off"
                             value={taskType}
                             disabled={!selectedProject}

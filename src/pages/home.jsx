@@ -81,8 +81,7 @@ class Home extends Component {
 
     goHome = () => {
         // update project
-        console.log(this.state.selectedProject);
-        if(this.state.selectedProject){
+        if(this.state.selectedProject && this.state.selectedProject.projectId){
             this.updateProject(this.state.selectedProject);
         }
         this.props.history.push('/home');

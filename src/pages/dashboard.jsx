@@ -4,10 +4,12 @@ import { Button, Grid, Header, Statistic, Label, Input, Breadcrumb, Icon, Checkb
 //redux
 import { connect } from 'react-redux';
 import { addTask, completeTask } from '../redux/actions/task';
+import { getProjectTasks } from '../redux/actions/project';
 import AddTask from '../components/new-task';
 import CompleteTask from '../components/complete-task';
 import Loading from '../components/loading';
-import { isSuccessNow } from '../utils/string-utils';
+import {isSuccessNow} from '../utils/string-utils';
+import {TASK_DURATION_RED} from '../utils/constants';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -16,13 +18,25 @@ class Dashboard extends Component {
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             loading: false,
             taskCount: 0,
-            tasks: props.tasks,
             group: '',
             taskType: '',
             mine: false,
         }
         this.addTask = React.createRef();
         this.completeTask = React.createRef();
+    }
+    componentWillReceiveProps(nextProps){
+        if(isSuccessNow(this.props.COMPLETE_TASK_STATUS, nextProps.COMPLETE_TASK_STATUS)){
+            this.props.getProjectTasks(this.props.token, this.props.selectedProject.projectId);
+        }
+        
+        if(isSuccessNow(this.props.ADD_TASK_STATUS, nextProps.ADD_TASK_STATUS)){
+            this.props.getProjectTasks(this.props.token, this.props.selectedProject.projectId);
+        }
+
+        if(isSuccessNow(this.props.GET_TASKS_STATUS, nextProps.GET_TASKS_STATUS)){
+            this.setState({loading: false});
+        }
     }
     toDateFormat1 = (timestamp) => {
         var d = new Date(timestamp);
@@ -33,7 +47,7 @@ class Dashboard extends Component {
         var d = new Date();
         d.setHours(23, 59, 59, 999);
         var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-        var difference_ms = Math.abs(d.getTime() - timestamp);
+        var difference_ms = timestamp - d.getTime();
         var difference_days = Math.round(difference_ms / oneDay);
         return difference_days;
     }
@@ -73,19 +87,13 @@ class Dashboard extends Component {
         )
     }
     renderDue = (timestamp) => {
-        const days = this.getDaysFromToday(timestamp);
-        return (
-            (Date.now() >= timestamp) ?
-                <Header style={{ margin: 0 }} sub color='red'>
-                    {days <= 2 ? "YESTERDAY" : this.toDateFormat1(timestamp)}
-                </Header> :
-                <Header style={{ margin: 0 }} sub color='grey'>
-                    {days <= 1 ? "TOMORROW" : this.toDateFormat1(timestamp)}
-                </Header>
-        )
+        const daysDiff = this.getDaysFromToday(timestamp);
+        return <Header style={{ margin: 0 }} sub color={(daysDiff < TASK_DURATION_RED) ? 'red' : 'grey'}>
+            {this.toDateFormat1(timestamp)}
+        </Header>
     }
     renderTasks = () => {
-        const { tasks } = this.state;
+        const { tasks } = this.props;
         return tasks.map((item, index) => {
             return (
                 <Grid.Row key={index} style={{ cursor: 'pointer', borderBottom: '1px solid #F2F2F2' }}
@@ -151,8 +159,8 @@ class Dashboard extends Component {
         });
     }
     render() {
-        const { selectedProject, taskCount, } = this.props;
-        const { taskType } = this.state;
+        const { selectedProject, taskCount } = this.props;
+        const { taskType, loading } = this.state;
         return (
             <Grid className={"content"} columns={3}>
                 <Grid.Column width={10} style={{ padding: 5 }}>
@@ -168,11 +176,11 @@ class Dashboard extends Component {
                                     <Form.Field>
                                         <Checkbox label={<label style={{fontSize: 12}}>My Tasks</label>} onChange={() => this.toggleMine()} />
                                     </Form.Field>
-                                    <Form.Field>
+                                    <Form.Field className={"round"}>
                                         <Input icon='search' placeholder='Group Name'
                                             name='group' onChange={this.filterByGroup} />
                                     </Form.Field>
-                                    <Form.Field>
+                                    <Form.Field className={"round"}>
                                         <Input icon='search' placeholder='Task Type'
                                             value={taskType}
                                             name='taskType' 
@@ -192,7 +200,7 @@ class Dashboard extends Component {
                 <Grid.Column width={6} style={{ padding: 5 }}>
                     <div className={"content-col"} style={{ padding: 15 }}>
                         <div className={"row space-between align-center"}>
-                            <Header style={{ margin: 0 }} as="h3">{selectedProject.projectName}</Header>
+                            <Header style={{ margin: 0 }} as="h3">{selectedProject.name}</Header>
                             <Button
                                 onClick={() => this.addTask.current.open()}
                                 color='blue' circular compact>New Task</Button>
@@ -210,7 +218,7 @@ class Dashboard extends Component {
 
                     <CompleteTask ref={this.completeTask}
                         closeTask={this.closeTask} />
-                    <Loading loading={this.state.loading} />
+                    <Loading loading={loading} />
 
                 </Grid.Column>
             </Grid>
@@ -237,6 +245,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
     addTask,
     completeTask,
+    getProjectTasks,
 }
 
 //export default Dashboard;

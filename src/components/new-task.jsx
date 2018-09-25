@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Modal, Button, Header, Form } from 'semantic-ui-react';
+import { Modal, Button, Header, Form, Icon, Input } from 'semantic-ui-react';
+import { RectDatePicker } from 'rect-ui-calendar';
 
 export default class AddTask extends Component {
     constructor(props) {
@@ -12,6 +13,8 @@ export default class AddTask extends Component {
             nextRun: '',
             owner: '',
             error: false,
+            selected: '',
+            open: false,
         }
     }
     open = () => this.setState({
@@ -42,8 +45,23 @@ export default class AddTask extends Component {
         });
     }
 
+    onSelect = (selected) => {
+        var str = selected.getDate() + "/" + (parseInt(selected.getMonth(), 10) + 1).toString().padStart(2, "0") + "/" + selected.getFullYear();
+        this.setState({ open: false, nextRun: str });
+    }
+    openCalendar = (e) => {
+        const { nextRun } = this.state;
+        var d = new Date();
+        var ds = nextRun.split("/");
+        d.setDate(ds[0]);
+        d.setMonth(ds[1] - 1);
+        d.setFullYear(ds[2]);
+        d.setHours(0, 0, 0);
+        this.setState({ selected: d, open: true })
+    }
+
     render() {
-        const { modalOpen, type, group, description, nextRun, owner } = this.state;
+        const { modalOpen, type, group, description, nextRun, owner, open } = this.state;
         const { taskTypes } = this.props;
         return (
             <Modal size='mini' open={modalOpen} onClose={this.close}>
@@ -62,6 +80,7 @@ export default class AddTask extends Component {
                                 onChange={this.handleInputChange}
                                 placeholder='Task Group' />
                         </Form.Field>
+                        
                         <Form.Select
                             search selection
                             onChange={this.handleInputChange}
@@ -74,12 +93,20 @@ export default class AddTask extends Component {
                                 onChange={this.handleInputChange}
                                 placeholder='Email' />
                         </Form.Field>
+
                         <Form.Field>
-                            <label>Due</label>
-                            <input name='nextRun' value={nextRun}
+                            <label>Next Due</label>
+                            <Input 
+                                icon={<Icon name='calendar outline' link onClick={this.openCalendar} />}
+                                iconPosition='left'
+                                name='nextRun' value={nextRun}
                                 onChange={this.handleInputChange}
                                 placeholder='DD/MM/YYYY' />
                         </Form.Field>
+
+                        <RectDatePicker open={open}
+                            selected={this.state.selected}
+                            onSelect={this.onSelect} />
                     </Form>
                 </Modal.Content>
                 <Modal.Actions>

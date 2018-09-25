@@ -64,15 +64,15 @@ class Register extends Component {
                                         color='blue' type='submit'>LOGIN</Button>
                                 </div>:
                                 <Form onSubmit={this.handleSubmit} autoComplete="off">
-                                    <Form.Field>
+                                    <Form.Field className={"round"}>
                                         <label>Name</label>
                                         <Input name='name' onChange={this.handleInputChange} value={name} icon='user outline' iconPosition='left' placeholder='John Doe' />
                                     </Form.Field>
-                                    <Form.Field>
+                                    <Form.Field className={"round"}>
                                         <label>Email Address</label>
                                         <Input name='email' onChange={this.handleInputChange} value={email} icon='envelope outline' iconPosition='left' placeholder='john.doe@company.com' />
                                     </Form.Field>
-                                    <Form.Field>
+                                    <Form.Field className={"round"}>
                                         <label>Password</label>
                                         <Input name='password' onChange={this.handleInputChange} value={password} type='password' icon='lock' iconPosition='left' placeholder='Password' />
                                     </Form.Field>

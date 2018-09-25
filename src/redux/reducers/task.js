@@ -13,6 +13,7 @@ import {
 
 import countBy from 'lodash/countBy';
 import toPairs from 'lodash/toPairs';
+import sortBy from 'lodash/sortBy';
 
 import { PURGE } from 'redux-persist';
 
@@ -60,7 +61,7 @@ function metaReducer(state = initialMetaState, action) {
 function dataReducer(state = initialDataState, action) {
 	switch (action.type) {
 		case GET_PROJECT_TASKS_FULFILLED:
-			const tasks = action.payload.data.tasks;
+			const tasks = sortBy(action.payload.data.tasks, 'nextRun');
 			const taskCount = tasks.length;
 			const byTaskTypes = countBy(tasks, 'type');
 			return {

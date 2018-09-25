@@ -69,8 +69,8 @@
     border-radius: 100px;
 }
 
-.ui.input input{
-    border-radius: 100px!important;
+.ui.form .field.round .ui.input input, .ui.input.round input{
+    border-radius: 100px;
 }
 
 .ui.action.input>.button{
@@ -82,7 +82,7 @@
 
 
 .ui.selection.dropdown .menu>.item{
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .ui.statistic>.label, .ui.statistics .statistic>.label{
