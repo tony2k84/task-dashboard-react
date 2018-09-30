@@ -12,7 +12,6 @@ export default class AddTask extends Component {
             description: '',
             nextRun: '',
             owner: '',
-            error: false,
             selected: '',
             open: false,
         }
@@ -23,7 +22,7 @@ export default class AddTask extends Component {
         group: '',
         description: '',
         nextRun: '',
-        owner: ''
+        owner: '',
     })
     close = () => this.setState({ modalOpen: false })
 
@@ -33,7 +32,6 @@ export default class AddTask extends Component {
         var d = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0]);
         d.setHours(23, 59, 59, 999);
         this.props.addTask(type, group, description, d.getTime(), owner);
-        this.close();
     }
     handleInputChange = (event, data) => {
         const target = event.target;
@@ -68,35 +66,35 @@ export default class AddTask extends Component {
                 <Header icon='dot circle' content='New Task' />
                 <Modal.Content>
                     <Form size='small' autoComplete='off'>
-                        <Form.Field>
+                        <Form.Field required>
                             <label>Description</label>
                             <input name='description' value={description}
                                 onChange={this.handleInputChange}
                                 placeholder='Description' />
                         </Form.Field>
-                        <Form.Field>
+                        <Form.Field required>
                             <label>Task Group</label>
                             <input name='group' value={group}
                                 onChange={this.handleInputChange}
                                 placeholder='Task Group' />
                         </Form.Field>
-                        
-                        <Form.Select
+
+                        <Form.Select required
                             search selection
                             onChange={this.handleInputChange}
                             name='type'
                             value={type}
                             fluid label='Task Type' options={taskTypes} placeholder='Task Type' />
-                        <Form.Field>
+                        <Form.Field required>
                             <label>Owner</label>
                             <input name='owner' value={owner}
                                 onChange={this.handleInputChange}
                                 placeholder='Email' />
                         </Form.Field>
 
-                        <Form.Field>
+                        <Form.Field required>
                             <label>Next Due</label>
-                            <Input 
+                            <Input
                                 icon={<Icon name='calendar outline' link onClick={this.openCalendar} />}
                                 iconPosition='left'
                                 name='nextRun' value={nextRun}

@@ -13,12 +13,16 @@ export default class CompleteTask extends Component {
             selected: '',
             open: false,
             openType: '',
+            showError: false,
+            errorMessage: '',
         }
     }
     open = (task) => this.setState({
         task: task,
         modalOpen: true,
         nextRun: '',
+        showError: false,
+        errorMessage: '',
     })
     close = () => this.setState({ modalOpen: false })
 
@@ -39,7 +43,6 @@ export default class CompleteTask extends Component {
             nextRunTS = d.getTime();
         }
         this.props.closeTask(_id, lastRunTS, nextRunTS);
-        this.close();
     }
     handleInputChange = (event, data) => {
         const target = event.target;
@@ -57,8 +60,8 @@ export default class CompleteTask extends Component {
     }
 
     onSelect = (selected) => {
-        const {openType} = this.state;
-        if(openType === 'lastRun')
+        const { openType } = this.state;
+        if (openType === 'lastRun')
             this.setState({ open: false, lastRun: this.toDateFormat1(selected) });
         else
             this.setState({ open: false, nextRun: this.toDateFormat1(selected) });
@@ -106,8 +109,8 @@ export default class CompleteTask extends Component {
                         </Form.Field>
                         <Form.Field>
                             <label>Completion Date</label>
-                            <Input 
-                                icon={<Icon name='calendar outline' link onClick={()=>this.openCalendar('lastRun')} />}
+                            <Input
+                                icon={<Icon name='calendar outline' link onClick={() => this.openCalendar('lastRun')} />}
                                 iconPosition='left'
                                 name='lastRun' value={lastRun}
                                 onChange={this.handleInputChange}
@@ -115,8 +118,8 @@ export default class CompleteTask extends Component {
                         </Form.Field>
                         <Form.Field>
                             <label>Next Due</label>
-                            <Input 
-                                icon={<Icon name='calendar outline' link onClick={()=>this.openCalendar('nextRun')} />}
+                            <Input
+                                icon={<Icon name='calendar outline' link onClick={() => this.openCalendar('nextRun')} />}
                                 iconPosition='left'
                                 name='nextRun' value={nextRun}
                                 onChange={this.handleInputChange}

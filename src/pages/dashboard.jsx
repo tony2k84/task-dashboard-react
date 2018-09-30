@@ -8,8 +8,9 @@ import { getProjectTasks } from '../redux/actions/project';
 import AddTask from '../components/new-task';
 import CompleteTask from '../components/complete-task';
 import Loading from '../components/loading';
-import {isSuccessNow} from '../utils/string-utils';
-import {TASK_DURATION_RED} from '../utils/constants';
+import { isSuccessNow, isFailNow } from '../utils/string-utils';
+import { TASK_DURATION_RED, TASK_ADD_WRONG_ASIGNEE_MSG, GENERIC_ERROR } from '../utils/constants';
+import { validationNewTask, validationCompleteTask } from '../utils/validation-utils';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -17,6 +18,8 @@ class Dashboard extends Component {
         this.state = {
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             loading: false,
+            error: false,
+            message: '',
             taskCount: 0,
             group: '',
             taskType: '',
@@ -25,17 +28,23 @@ class Dashboard extends Component {
         this.addTask = React.createRef();
         this.completeTask = React.createRef();
     }
-    componentWillReceiveProps(nextProps){
-        if(isSuccessNow(this.props.COMPLETE_TASK_STATUS, nextProps.COMPLETE_TASK_STATUS)){
+    componentWillReceiveProps(nextProps) {
+        if (isSuccessNow(this.props.COMPLETE_TASK_STATUS, nextProps.COMPLETE_TASK_STATUS)) {
+            this.completeTask.current.close();
             this.props.getProjectTasks(this.props.token, this.props.selectedProject.projectId);
         }
-        
-        if(isSuccessNow(this.props.ADD_TASK_STATUS, nextProps.ADD_TASK_STATUS)){
+        if (isSuccessNow(this.props.ADD_TASK_STATUS, nextProps.ADD_TASK_STATUS)) {
+            this.addTask.current.close();
             this.props.getProjectTasks(this.props.token, this.props.selectedProject.projectId);
         }
-
-        if(isSuccessNow(this.props.GET_TASKS_STATUS, nextProps.GET_TASKS_STATUS)){
-            this.setState({loading: false});
+        if (isSuccessNow(this.props.GET_TASKS_STATUS, nextProps.GET_TASKS_STATUS)) {
+            this.setState({ loading: false });
+        }
+        if (isFailNow(this.props.ADD_TASK_STATUS, nextProps.ADD_TASK_STATUS)) {
+            this.setState({ loading: true, error: true, message: TASK_ADD_WRONG_ASIGNEE_MSG });
+        }
+        if (isFailNow(this.props.COMPLETE_TASK_STATUS, nextProps.COMPLETE_TASK_STATUS)) {
+            this.setState({ loading: true, error: true, message: GENERIC_ERROR });
         }
     }
     toDateFormat1 = (timestamp) => {
@@ -80,7 +89,7 @@ class Dashboard extends Component {
                     <Header as='h4' color='grey' style={{ margin: 0, marginLeft: 10 }}>{item[0]}</Header>
                 </div>
                 <Label as='a' circular size='large' color='blue'
-                    onClick={()=>this.setState({taskType: item[0]}, ()=> this._filterByType())}>
+                    onClick={() => this.setState({ taskType: item[0] }, () => this._filterByType())}>
                     {item[1]}
                 </Label>
             </div>
@@ -122,14 +131,24 @@ class Dashboard extends Component {
     }
     saveTask = (type, group, description, nextRun, owner) => {
         const { token, selectedProject } = this.props;
-        this.setState({ loading: true });
-        this.props.addTask(token, selectedProject.projectId, type, group, description, nextRun, owner);
+        const message = validationNewTask(type, group, description, nextRun, owner);
+        if(message){
+            this.setState({ loading: true, error: true, message: message });
+        }else{
+            this.setState({ loading: true });
+            this.props.addTask(token, selectedProject.projectId, type, group, description, nextRun, owner);
+        }
     }
     closeTask = (taskId, lastRun, nextRun) => {
         const { token, completeTask } = this.props;
         const { projectId } = this.props.selectedProject;
-        this.setState({ loading: true });
-        completeTask(token, projectId, taskId, lastRun, nextRun);
+        const message = validationCompleteTask(lastRun);
+        if(message){
+            this.setState({ loading: true, error: true, message: message });
+        }else{
+            this.setState({ loading: true });
+            completeTask(token, projectId, taskId, lastRun, nextRun);
+        }
     }
     filterByGroup = (event) => {
         const target = event.target;
@@ -139,7 +158,7 @@ class Dashboard extends Component {
             tasks: tasks.filter(item => item.group.toLowerCase().includes(group.toLowerCase()))
         });
     }
-    _filterByType(){
+    _filterByType() {
         const { tasks } = this.props;
         const { taskType } = this.state;
         this.setState({
@@ -147,7 +166,7 @@ class Dashboard extends Component {
         });
     }
     filterByType = (event) => {
-        this.setState({taskType: event.target.value}, ()=> this._filterByType());
+        this.setState({ taskType: event.target.value }, () => this._filterByType());
     }
     toggleMine = () => {
         const { mine } = this.state;
@@ -160,13 +179,12 @@ class Dashboard extends Component {
     }
     render() {
         const { selectedProject, taskCount } = this.props;
-        const { taskType, loading } = this.state;
+        const { taskType } = this.state;
         return (
             <Grid className={"content"} columns={3}>
                 <Grid.Column width={10} style={{ padding: 5 }}>
                     <div style={{ backgroundColor: '#ffffff', padding: 10, marginBottom: 5 }}
                         className={"row space-between align-center"}>
-
                         <Header style={{ margin: 0 }} as="h3">Tasks
                             <Header.Subheader>{taskCount} Tasks</Header.Subheader>
                         </Header>
@@ -174,7 +192,7 @@ class Dashboard extends Component {
                             <Form size='small' autoComplete="off">
                                 <Form.Group className={"row align-center"}>
                                     <Form.Field>
-                                        <Checkbox label={<label style={{fontSize: 12}}>My Tasks</label>} onChange={() => this.toggleMine()} />
+                                        <Checkbox label={<label style={{ fontSize: 12 }}>My Tasks</label>} onChange={() => this.toggleMine()} />
                                     </Form.Field>
                                     <Form.Field className={"round"}>
                                         <Input icon='search' placeholder='Group Name'
@@ -183,7 +201,7 @@ class Dashboard extends Component {
                                     <Form.Field className={"round"}>
                                         <Input icon='search' placeholder='Task Type'
                                             value={taskType}
-                                            name='taskType' 
+                                            name='taskType'
                                             onChange={this.filterByType} />
                                     </Form.Field>
                                 </Form.Group>
@@ -200,8 +218,9 @@ class Dashboard extends Component {
                 <Grid.Column width={6} style={{ padding: 5 }}>
                     <div className={"content-col"} style={{ padding: 15 }}>
                         <div className={"row space-between align-center"}>
-                            <Header style={{ margin: 0 }} as="h3">{selectedProject.name}</Header>
+                            <Header style={{ margin: 0 }} as="h3">{selectedProject.name ? selectedProject.name : 'SELCT A PROJECT'}</Header>
                             <Button
+                                disabled={selectedProject.name ? false : true}
                                 onClick={() => this.addTask.current.open()}
                                 color='blue' circular compact>New Task</Button>
                         </div>
@@ -218,7 +237,11 @@ class Dashboard extends Component {
 
                     <CompleteTask ref={this.completeTask}
                         closeTask={this.closeTask} />
-                    <Loading loading={loading} />
+
+                    <Loading loading={this.state.loading}
+                        error={this.state.error}
+                        message={this.state.message}
+                        onClose={() => this.setState({ loading: false, error: false, message: '' })} />
 
                 </Grid.Column>
             </Grid>
